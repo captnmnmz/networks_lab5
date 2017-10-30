@@ -20,8 +20,8 @@ public class HelloMessage {
 	public HelloMessage(String s) {
 		try {
 			String[] _s = s.split(";");
+			//TODO Verify that the first item is "HELLO" ?
 			if(_s[0].equals("HELLO")) {
-				//TODO Verify that the first item is "HELLO" ?
 				senderID = _s[1];
 				sequence_num = Integer.parseInt(_s[2]);
 				hello_interval = Integer.parseInt(_s[3]);
