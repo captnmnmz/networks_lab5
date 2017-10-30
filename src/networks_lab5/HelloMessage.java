@@ -64,9 +64,18 @@ public class HelloMessage {
 		return message;
 	}
 	
+	/**
+	 * This method adds a peer to the list if this one is not full. If the list is full (256 elements), display an error message
+	 *
+	 */
+	
 	public void addPeer (String peerID) {
-		peers.add(peerID);
-		NumPeers +=1;
+		if (NumPeers<255) {
+			peers.add(peerID);
+			NumPeers +=1;
+		}else {
+			System.err.println("There are  already 256 peers : impossible to add peer");
+		}
 	}
 	
 	
