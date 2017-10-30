@@ -21,15 +21,41 @@ public class HelloMessage {
 		try {
 			String[] _s = s.split(";");
 			//TODO Verify that the first item is "HELLO" ?
-			if(_s[0].equals("HELLO")) {
-				senderID = _s[1];
-				sequence_num = Integer.parseInt(_s[2]);
-				hello_interval = Integer.parseInt(_s[3]);
-				NumPeers = Integer.parseInt(_s[4]);
-				if (NumPeers!=0) {
-					for (int i=0; i<NumPeers; i++) {
-						peers.add(_s[5+i]);
+			
+			//TODO Verify the number of attribute ? Less than 5 errors
+			if(_s[0].equals("HELLO") && _s.length >= 5) {
+				
+				//Verify that senderID contains only characters A-Z a-z and 0-9 
+				if (!_s[1].matches("[^\\w\\d\\;]")) {
+					
+					//Verify that senderID's length is lower or equal to 16
+					if(_s[1].length()<=16) {
+						senderID = _s[1];
+						sequence_num = Integer.parseInt(_s[2]);
+						
+						//Verify that HelloInterval is in [0,255]
+						int HelloInterval = Integer.parseInt(_s[3]);
+						if(0<=HelloInterval && HelloInterval<256) {
+							hello_interval = Integer.parseInt(_s[3]);
+							int NumPeers_temp = Integer.parseInt(_s[4]);
+							if (0<=NumPeers_temp && NumPeers_temp<256) {
+								NumPeers = NumPeers_temp;
+								if (NumPeers!=0) {
+									for (int i=0; i<NumPeers; i++) {
+										peers.add(_s[5+i]);
+									}
+								}
+							}else {
+								System.err.println("The number of peers is too large : it must be contained in [0,255]");
+							}
+						}else {
+							System.err.println("The hello interval is too large : it must be contained in [0,255]");
+						}
+					}else {
+						System.err.println("The id is too large : id must be a string of up to 16 characters");
 					}
+				}else {
+					System.err.println("The id must contain only characters A-Z a-z and 0-9 ");
 				}
 			}else {
 				throw new IllegalArgumentException() ;
@@ -44,10 +70,25 @@ public class HelloMessage {
 	 * 
 	 */
 	public HelloMessage(String senderID, int sequenceNo, int HelloInterval) {
-		this.senderID = senderID;
-		sequence_num = sequenceNo;
-		hello_interval = HelloInterval;
-		NumPeers = 0;
+		//Verify that senderID contains only characters A-Z a-z and 0-9 
+		if (!senderID.matches("[^\\w\\d\\;]")) {
+			//Verify that senderID's length is lower or equal to 16
+			if(senderID.length()<=16) {
+				this.senderID = senderID;
+				sequence_num = sequenceNo;
+				//Verify that HelloInterval is in [0,255]  
+				if(0<=HelloInterval && HelloInterval<256) {
+					hello_interval = HelloInterval;
+					NumPeers = 0;
+				}else {
+					System.err.println("The hello interval is too large : it must be contain in [0,255]");
+				}
+			}else {
+				System.err.println("The id is too large : id must be a string of up to 16 characters");
+			}
+		}else {
+			System.err.println("The id must contain only characters A-Z a-z and 0-9 ");
+		}
 	}
 	
 	/**
@@ -70,9 +111,18 @@ public class HelloMessage {
 	 */
 	
 	public void addPeer (String peerID) {
+		//Verify that the list of peers is full and if peerID's length is lower or equal to 16 and if it contains only characters A-Z a-z and 0-9 
 		if (NumPeers<255) {
-			peers.add(peerID);
-			NumPeers +=1;
+			if (!peerID.matches("[^\\w\\d\\;]")) {
+				if(peerID.length()<=16) {
+					peers.add(peerID);
+					NumPeers +=1;
+				}else {
+					System.err.println("The id is too large : id must be a string of up to 16 characters");
+				}
+			}else {
+				System.err.println("The id must contain only characters A-Z a-z and 0-9 ");
+			}
 		}else {
 			System.err.println("There are  already 256 peers : impossible to add peer");
 		}
