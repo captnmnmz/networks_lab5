@@ -10,55 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-
-//TODO Not use yet
-class MulticastReceiver extends Thread{
-	private MulticastSocket socket = null;
-	//TODO size
-    private byte[] buf = new byte[2560];
-    private final String ADDRESS = "255.255.255.255";
-    private final int PORT = 4242;
- 
-    public void run() {
-        try {
-			socket = new MulticastSocket(PORT);
-			InetAddress group=InetAddress.getByName(ADDRESS);
-			socket.joinGroup(group);
-			
-	        while (true) {
-	            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-	            socket.receive(packet);
-	            String received = new String(packet.getData(), 0, packet.getLength());
-	            if ("end".equals(received)) {
-	                break;
-	            }
-	        }
-	        socket.leaveGroup(group);
-	        socket.close();
-		} catch (UnknownHostException e) {
-			System.err.println(e.getMessage());
-        } catch (IOException e) {
-        		System.err.println(e.getMessage());
-		}
-    }
-}
-
-class BroadcastingClient{
-	private static DatagramSocket broadcast_s = null;
-	
-	public static void broadcast(String broadcastMessage, InetAddress address, int port) throws IOException {
-		broadcast_s= new DatagramSocket();
-		broadcast_s.setBroadcast(true);
-		byte[] buf = broadcastMessage.getBytes();
-		
-		DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-		broadcast_s.send(packet);
-		broadcast_s.close();
-	}
-	
-}
-
 public class MuxDemuxSimple implements Runnable {
+	private final Boolean broadcast = true;
 	private Socket myS = null;
 	private BufferedReader in;
 	private SimpleMessageHandler[] myMessageHandlers;
@@ -78,7 +31,7 @@ public class MuxDemuxSimple implements Runnable {
 		}
 		
 		//Receive
-		Runnable receiver = new Runnable() {
+		Runnable broadcast_receiver = new Runnable() {
 			public void run() {
 				try {
 					in = new BufferedReader(new InputStreamReader(myS.getInputStream()));
@@ -96,14 +49,44 @@ public class MuxDemuxSimple implements Runnable {
 			}
 		};
 		
+		Runnable multicast_receiver = new Runnable(){
+			public void run(){
+				//TODO
+		        try {
+					MulticastSocket socket = new MulticastSocket(PORT);
+					InetAddress group=InetAddress.getByName(ADDRESS);
+					socket.joinGroup(group);
+					byte[] buf = new byte[2560];
+			        while (true) {
+			            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+			            socket.receive(packet);
+			            String received = new String(packet.getData(), 0, packet.getLength());
+			            if ("end".equals(received)) {
+			                break;
+			            }
+			        }
+			        socket.leaveGroup(group);
+			        socket.close();
+				} catch (UnknownHostException e) {
+					System.err.println(e.getMessage());
+		        } catch (IOException e) {
+		        		System.err.println(e.getMessage());
+				}
+			}
+		};
+		
 		//Send
 		Runnable sender = new Runnable() {
 			public void run() {
-				while(!outgoing.isEmpty()) {
+				while(true) {
 					try {
-						BroadcastingClient.broadcast(outgoing.dequeue(), InetAddress.getByName(ADDRESS) , PORT);
-					} catch (NoSuchElementException e) {
-						System.err.println(e.getMessage());
+						String broadcastMessage = outgoing.dequeue();
+						DatagramSocket broadcast_s= new DatagramSocket();
+						broadcast_s.setBroadcast(true);
+						byte[] buf = broadcastMessage.getBytes();
+						DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ADDRESS), PORT);
+						broadcast_s.send(packet);
+						broadcast_s.close();
 					} catch (UnknownHostException e) {
 						System.err.println(e.getMessage());
 					} catch (IOException e) {
@@ -113,8 +96,14 @@ public class MuxDemuxSimple implements Runnable {
 			}
 		};
 		
-		Thread receiverThread = new Thread(receiver);
+
 		Thread senderThread = new Thread(sender);
+		Thread receiverThread;
+;		if (broadcast){
+			receiverThread = new Thread(broadcast_receiver);
+		}else{
+			receiverThread = new Thread(multicast_receiver);
+		}
 		
 		receiverThread.start();
 		senderThread.start();

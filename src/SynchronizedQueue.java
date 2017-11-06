@@ -7,9 +7,9 @@ public class SynchronizedQueue {
 	private final LinkedList<String> queue;
 	private int size;
 
-	public SynchronizedQueue(int i) {
+	public SynchronizedQueue(int size) {
 		queue = new LinkedList<String>();
-		size = i;
+		this.size = size;
 	}
 
 	public synchronized boolean isEmpty() {
@@ -25,12 +25,20 @@ public class SynchronizedQueue {
 		if (isFull()) {
 			throw new Exception("The queue is already full");
 		}
+		else if (isEmpty()){
+			notify();
+		}
 		queue.add(url);
 	}
 
-	public synchronized String dequeue() throws NoSuchElementException {
+	public synchronized String dequeue() {
 		if (this.isEmpty()) {
-			throw new NoSuchElementException("The queue is already empty");
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return queue.remove();
 	}
