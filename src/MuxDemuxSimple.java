@@ -5,7 +5,6 @@ import java.net.MulticastSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.NoSuchElementException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -99,7 +98,7 @@ public class MuxDemuxSimple implements Runnable {
 
 		Thread senderThread = new Thread(sender);
 		Thread receiverThread;
-;		if (broadcast){
+		if (broadcast){
 			receiverThread = new Thread(broadcast_receiver);
 		}else{
 			receiverThread = new Thread(multicast_receiver);
