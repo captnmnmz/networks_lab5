@@ -22,13 +22,10 @@ public class SynchronizedQueue {
 	}
 
 	public synchronized void enqueue(String url) throws Exception {
-		if (isFull()) {
-			throw new Exception("The queue is already full");
-		}
-		else if (isEmpty()){
+		if (queue.size() < size) {
+			queue.add(url);
 			notify();
 		}
-		queue.add(url);
 	}
 
 	public synchronized String dequeue() {
