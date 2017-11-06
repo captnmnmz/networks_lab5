@@ -16,8 +16,8 @@ class MulticastReceiver extends Thread{
 	private MulticastSocket socket = null;
 	//TODO size
     private byte[] buf = new byte[2560];
-    private String ADDRESS = "255.255.255.255";
-    private int PORT = 4242;
+    private final String ADDRESS = "255.255.255.255";
+    private final int PORT = 4242;
  
     public void run() {
         try {
@@ -63,8 +63,8 @@ public class MuxDemuxSimple implements Runnable {
 	private BufferedReader in;
 	private SimpleMessageHandler[] myMessageHandlers;
 	private SynchronizedQueue outgoing = new SynchronizedQueue(20);
-    private String ADDRESS = "255.255.255.255";
-    private int PORT = 4242;
+    private final String ADDRESS = "255.255.255.255";
+    private final int PORT = 4242;
 	
 	public MuxDemuxSimple(SimpleMessageHandler[] h, Socket s) {
 		myS= s;
