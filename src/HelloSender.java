@@ -2,6 +2,7 @@ import java.lang.Object;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.LinkedList;
 
 class RandomAlphanumeric {
 	private static String letters = "abcdefghijklmnopqrstuvwxyz";
@@ -33,6 +34,10 @@ public class HelloSender implements SimpleMessageHandler, Runnable {
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
+					LinkedList<String> list_peers = PeerTable.getPeersID();
+					for (int i=0; i<list_peers.size() ; i++) {
+						m.addPeer(list_peers.get(i));
+					}
 					myMuxDemux.send(m.getHelloMessageAsEncodedString());
 				}
 			};
