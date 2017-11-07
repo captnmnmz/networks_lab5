@@ -28,14 +28,14 @@ class PeerRecord{
 }
 
 public class PeerTable {
-	HashMap<String,PeerRecord> table;
+	private static HashMap<String,PeerRecord> table;
 
-	public synchronized void addPeer(String peerID, InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
+	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, peerSeqNum, HelloInterval, peerState);
 		table.put(peerID, peer);
 	}
 
-	public synchronized String getPeer(String peerID){
+	public static synchronized String getPeer(String peerID){
 		if (table.containsKey(peerID)){
 			PeerRecord peer = table.get(peerID);
 			if (peer.expirationTime<System.currentTimeMillis()){
@@ -50,17 +50,17 @@ public class PeerTable {
 
 	}
 	
-	public synchronized LinkedList<String> getPeersID(){
+	public static synchronized LinkedList<String> getPeersID(){
 		LinkedList<String> peers = new LinkedList<String>();
 		for (String id : table.keySet()){
-			if (this.getPeer(id)!=null){
-				peers.add(this.getPeer(id));
+			if (PeerTable.getPeer(id)!=null){
+				peers.add(PeerTable.getPeer(id));
 			}
 		}
 		return peers;
 	}
 
-	public synchronized boolean containsPeer(String peerID){
+	public static synchronized boolean containsPeer(String peerID){
 		if (table.containsKey(peerID)){
 			PeerRecord peer = table.get(peerID);
 			if (peer.expirationTime<System.currentTimeMillis()){
