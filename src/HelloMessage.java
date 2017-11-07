@@ -1,13 +1,15 @@
 
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class HelloMessage {
 	private String senderID;
 	private int sequence_num;
 	private int hello_interval;
 	private int NumPeers;
-	private LinkedList<String> peers = new LinkedList<String>();
+	private List<String> peers = new ArrayList<String>();
 	
 	/**
 	 * This method populates the attributes of the HelloMessage object.
@@ -99,7 +101,7 @@ public class HelloMessage {
 	 */
 	public String getHelloMessageAsEncodedString() {
 		String message = "HELLO;"+ senderID +";"+Integer.toString(sequence_num)+";"+Integer.toString(hello_interval)+";"+Integer.toString(NumPeers);
-		for (int i=0; i<NumPeers; i++) {
+		for (int i=0; i<peers.size(); i++) {
 			message = message + ";" + peers.get(i);
 		}
 		return message;
@@ -115,8 +117,8 @@ public class HelloMessage {
 		if (NumPeers<255) {
 			if (!peerID.matches("[^\\w\\d\\;]")) {
 				if(peerID.length()<=16) {
-					peers.add(peerID);
-					NumPeers +=1;
+					peers=PeerTable.sendPeersID();
+					NumPeers = peers.size();
 				}else {
 					System.err.println("The id is too large : id must be a string of up to 16 characters");
 				}
@@ -163,7 +165,7 @@ public class HelloMessage {
 	 * @return if there is no peer, the method return an empty LinkedList<String>
 	 * 
 	 */
-	public LinkedList<String> getPeers() {
+	public List<String> getPeers() {
 		return this.peers;
 	}
 	

@@ -44,11 +44,9 @@ public class MuxDemuxSimple implements Runnable {
 						myS.receive(dpReceived);
 						int endIndex = dpReceived.getLength();
 						String peerIPAddress = dpReceived.getAddress().toString();
-						System.out.println(peerIPAddress);
 						String message = new String(dpReceived.getData()).substring(0, endIndex);
-						String payload = peerIPAddress + ";" + message;
 						for (int i=0; i<myMessageHandlers.length; i++){
-							myMessageHandlers[i].handleMessage(payload);
+							myMessageHandlers[i].handleMessage(message);
 						}
 					} catch (UnknownHostException e){
 					} catch (IOException e) {

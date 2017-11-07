@@ -1,8 +1,9 @@
-import java.lang.Object;
+
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.LinkedList;
+
 
 class RandomAlphanumeric {
 	private static String letters = "abcdefghijklmnopqrstuvwxyz";
@@ -34,21 +35,24 @@ public class HelloSender implements SimpleMessageHandler {
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
-					LinkedList<String> list_peers = PeerTable.getPeersID();
+					List<String> list_peers = PeerTable.sendPeersID();
+					System.out.println(m.getHelloMessageAsEncodedString());
+					System.out.println(list_peers);
 					if(list_peers!=null) {
-						for (int i=0; i<list_peers.size() ; i++) {
+						for (int i=0; i<list_peers.size(); i++) {
 							m.addPeer(list_peers.get(i));
 						}
-						myMuxDemux.send(m.getHelloMessageAsEncodedString());
 					}
+					myMuxDemux.send(m.getHelloMessageAsEncodedString());
 				}
 			};
 			//We send Hello message before reaching the maximum time
 			int delay = new Random().nextInt(HelloInterval);
-			TIMER.schedule(task,delay);
+			TIMER.schedule(task,0,delay);
 		}catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}
+
 	}
 	@Override
 	public void handleMessage(String m) {

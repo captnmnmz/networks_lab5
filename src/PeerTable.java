@@ -8,8 +8,10 @@ import java.util.NoSuchElementException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 class PeerRecord{
 	String peerID;
@@ -89,15 +91,16 @@ public class PeerTable {
 	}
 	
 
-	public synchronized String sendString(){
+
+	public static synchronized List<String> sendPeersID(){
+		List<String> PeerList= new ArrayList<String>();
 		if(table.size() == 0) {
-			return "" ;
+			return PeerList ;
 		}
-		String PeerList= "";
 		if(!table.keySet().isEmpty()){
 			for (String id : table.keySet()){
 				if (PeerTable.getPeer(id)!=null){
-					PeerList+= PeerTable.getPeer(id);
+					PeerList.add(PeerTable.getPeer(id));
 
 				}
 			}
