@@ -30,8 +30,8 @@ class PeerRecord{
 public class PeerTable {
 	private static HashMap<String,PeerRecord> table;
 
-	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
-		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, peerSeqNum, HelloInterval, peerState);
+	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
+		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
 		table.put(peerID, peer);
 	}
 
@@ -39,7 +39,6 @@ public class PeerTable {
 		if (table.containsKey(peerID)){
 			PeerRecord peer = table.get(peerID);
 			if (peer.expirationTime<System.currentTimeMillis()){
-				peer.peerState=PeerState.DYING;
 				table.remove(peerID);
 				return null;
 			}else{
@@ -74,6 +73,20 @@ public class PeerTable {
 		return false;
 	}
 	
+	public static synchronized void updatePeer(String peerID, int seqNumber){
+		PeerRecord peer = table.get(peerID);
+		if (peer.peerSeqNum!=seqNumber){
+			peer.peerState=PeerState.INCONSISTENT;
+		}
+		if (peer.peerState==PeerState.INCONSISTENT){
+			peer.peerState=PeerState.INCONSISTENT;
+		}
+		if (peer.peerState==PeerState.INCONSISTENT && peer.peerSeqNum==seqNumber){
+			peer.peerState=PeerState.SYNCHRONIZED;
+		}
+	}
+	
+
 	public synchronized String toString(){
 		return table.toString();
 	}
