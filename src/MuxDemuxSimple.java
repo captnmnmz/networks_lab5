@@ -11,14 +11,14 @@ import java.io.InputStreamReader;
 
 public class MuxDemuxSimple implements Runnable {
 	private final Boolean broadcast = true;
-	private Socket myS = null;
+	private DatagramSocket myS = null;
 	private BufferedReader in;
 	private SimpleMessageHandler[] myMessageHandlers;
 	private SynchronizedQueue outgoing = new SynchronizedQueue(20);
     private final String ADDRESS = "255.255.255.255";
     private final int PORT = 4242;
 	
-	public MuxDemuxSimple(SimpleMessageHandler[] h, Socket s) {
+	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s) {
 		myS= s;
 		myMessageHandlers = h;
 	}
@@ -32,19 +32,21 @@ public class MuxDemuxSimple implements Runnable {
 		//Receive
 		Runnable broadcast_receiver = new Runnable() {
 			public void run() {
-				try {
-					in = new BufferedReader(new InputStreamReader(myS.getInputStream()));
-					String message;
-					while ((message = in.readLine())!=null) {
-						for (int i=0; i< myMessageHandlers.length ; i++) {
+				while(true) {
+					byte[] bufferReceived = new byte[512];
+					DatagramPacket dpReceived;
+					try {
+						dpReceived = new DatagramPacket(bufferReceived,bufferReceived.length,InetAddress.getByName(ADDRESS),PORT);
+						myS.receive(dpReceived);
+						String message = new String(dpReceived.getData());
+						for (int i=0; i<myMessageHandlers.length; i++){
 							myMessageHandlers[i].handleMessage(message);
 						}
+					} catch (UnknownHostException e){
+					} catch (IOException e) {
 					}
-					in.close();
-					myS.close();
-				} catch (IOException e) {
-					System.err.println(e.getMessage());
 				}
+
 			}
 		};
 		
@@ -80,7 +82,7 @@ public class MuxDemuxSimple implements Runnable {
 				while(true) {
 					try {
 						String broadcastMessage = outgoing.dequeue();
-						DatagramSocket broadcast_s= new DatagramSocket();
+						DatagramSocket broadcast_s= myS;
 						broadcast_s.setBroadcast(true);
 						byte[] buf = broadcastMessage.getBytes();
 						DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ADDRESS), PORT);
@@ -97,13 +99,8 @@ public class MuxDemuxSimple implements Runnable {
 		
 
 		Thread senderThread = new Thread(sender);
-		Thread receiverThread;
-		if (broadcast){
-			receiverThread = new Thread(broadcast_receiver);
-		}else{
-			receiverThread = new Thread(multicast_receiver);
-		}
-		
+		Thread receiverThread=new Thread(broadcast_receiver);
+
 		receiverThread.start();
 		senderThread.start();
 	}

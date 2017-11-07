@@ -6,7 +6,7 @@ public class HelloMessageTest {
 
 	public static void main(String[] args) {
 		try {
-			Socket mySocket = new Socket(InetAddress.getByName("255.255.255.255"),4242);
+			DatagramSocket mySocket = new DatagramSocket(4242);
 			SimpleMessageHandler[] handlers = new SimpleMessageHandler[3];
 			handlers[0]= new HelloReceiver();
 			handlers[1]= new HelloSender();
