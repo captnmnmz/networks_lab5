@@ -36,8 +36,6 @@ public class HelloSender implements SimpleMessageHandler {
 				@Override
 				public void run() {
 					List<String> list_peers = PeerTable.sendPeersID();
-					System.out.println(m.getHelloMessageAsEncodedString());
-					System.out.println(list_peers);
 					if(list_peers!=null) {
 						for (int i=0; i<list_peers.size(); i++) {
 							m.addPeer(list_peers.get(i));

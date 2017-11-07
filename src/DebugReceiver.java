@@ -5,15 +5,17 @@ public class DebugReceiver implements SimpleMessageHandler {
 	
 	@Override
 	public void run() {
-		String s = incoming.dequeue();
-		try {
-			//Print raw message
-			System.out.println("Debug : " + s );
-			if (s.toLowerCase().contains("exception")) {
-				//TODO DO SOMETHING
+		while(true){
+			String s = incoming.dequeue();
+			try {
+				//Print raw message
+				System.out.println("Debug : " + s );
+				if (s.toLowerCase().contains("exception")) {
+					//TODO DO SOMETHING
+				}
+			}catch(Exception e) {
+				
 			}
-		}catch(Exception e) {
-			
 		}
 		
 	}
