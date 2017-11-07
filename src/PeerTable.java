@@ -89,7 +89,7 @@ public class PeerTable {
 	}
 	
 
-	public synchronized String toString(){
+	public synchronized String sendString(){
 		if(table.size() == 0) {
 			return "" ;
 		}
