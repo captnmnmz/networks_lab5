@@ -30,7 +30,7 @@ public class HelloSender implements SimpleMessageHandler, Runnable {
 			String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
 			//Generate a random HelloInterval < 256
 			int HelloInterval = new Random().nextInt(256);
-			HelloMessage m = new HelloMessage(senderID,1,HelloInterval);
+			HelloMessage m = new HelloMessage(senderID,-1,HelloInterval);
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {

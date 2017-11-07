@@ -9,6 +9,13 @@ public class HelloReceiver implements SimpleMessageHandler, Runnable {
 			try {
 				String received = incoming.dequeue();
 				HelloMessage hm = new HelloMessage(received);
+				
+				if (!PeerTable.containsPeer(hm.getSenderId())) {
+					PeerTable.addPeer();
+				}
+				//Update peer in any case
+				PeerTable.updatePeer();
+				
 				String message = hm.toString();
 				//Print the content on the screen
 				System.out.println(message);
