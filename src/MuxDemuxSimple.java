@@ -44,11 +44,9 @@ public class MuxDemuxSimple implements Runnable {
 						myS.receive(dpReceived);
 						int endIndex = dpReceived.getLength();
 						String peerIPAddress = dpReceived.getAddress().toString();
-						System.out.println(peerIPAddress);
 						String message = new String(dpReceived.getData()).substring(0, endIndex);
-						String payload = peerIPAddress + ";" + message;
 						for (int i=0; i<myMessageHandlers.length; i++){
-							myMessageHandlers[i].handleMessage(payload);
+							myMessageHandlers[i].handleMessage(message);
 						}
 					} catch (UnknownHostException e){
 					} catch (IOException e) {
@@ -91,7 +89,6 @@ public class MuxDemuxSimple implements Runnable {
 					try {
 						String broadcastMessage = outgoing.dequeue();
 						DatagramSocket broadcast_s= myS;
-						broadcast_s.setBroadcast(true);
 						byte[] buf = broadcastMessage.getBytes();
 						DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ADDRESS), PORT);
 						broadcast_s.send(packet);

@@ -45,10 +45,11 @@ public class HelloSender implements SimpleMessageHandler {
 			};
 			//We send Hello message before reaching the maximum time
 			int delay = new Random().nextInt(HelloInterval);
-			TIMER.schedule(task,delay);
+			TIMER.schedule(task,0,delay);
 		}catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}
+
 	}
 	@Override
 	public void handleMessage(String m) {
