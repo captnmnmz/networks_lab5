@@ -1,21 +1,21 @@
-
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.Socket;
 
 public class HelloMessageTest {
 
 	public static void main(String[] args) {
 		try {
-			HelloMessage hm = new HelloMessage("HeLLO;bastien;1;25;2;Bar;Foo");
-			System.out.println(hm.toString());
-			System.out.println("=============");
-			System.out.println("getHelloMessageEncoded : " + hm.getHelloMessageAsEncodedString());
-			System.out.println("=============");
-			hm.addPeer("Bob");
-			System.out.println("getPeers : " + hm.getPeers());
-			System.out.println("After added Bob : " + hm.getHelloMessageAsEncodedString() );
-			System.out.println("After added Bob : " + hm.toString());
-			System.out.println("=============");
-			System.out.println("=============");
-			System.out.println("=============");
+			Socket mySocket = new Socket(InetAddress.getByName("255.255.255.255"),4242);
+			SimpleMessageHandler[] handlers = new SimpleMessageHandler[3];
+			handlers[0]= new HelloReceiver();
+			handlers[1]= new HelloSender();
+			handlers[2]= new DebugReceiver();
+			MuxDemuxSimple dm = new MuxDemuxSimple(handlers, mySocket);
+			new Thread(handlers[0]).start();
+			new Thread(handlers[1]).start();
+			new Thread(handlers[2]).start();
+			new Thread(dm).start();
 	    }catch(Exception e ) {
 	    		System.err.println(e.getMessage());
 	    }

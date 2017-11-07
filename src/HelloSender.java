@@ -18,7 +18,7 @@ class RandomAlphanumeric {
 }
 
 
-public class HelloSender implements SimpleMessageHandler, Runnable {
+public class HelloSender implements SimpleMessageHandler {
 
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
@@ -30,15 +30,17 @@ public class HelloSender implements SimpleMessageHandler, Runnable {
 			String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
 			//Generate a random HelloInterval < 256
 			int HelloInterval = new Random().nextInt(256);
-			HelloMessage m = new HelloMessage(senderID,1,HelloInterval);
+			HelloMessage m = new HelloMessage(senderID,-1,HelloInterval);
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
 					LinkedList<String> list_peers = PeerTable.getPeersID();
-					for (int i=0; i<list_peers.size() ; i++) {
-						m.addPeer(list_peers.get(i));
+					if(list_peers!=null) {
+						for (int i=0; i<list_peers.size() ; i++) {
+							m.addPeer(list_peers.get(i));
+						}
+						myMuxDemux.send(m.getHelloMessageAsEncodedString());
 					}
-					myMuxDemux.send(m.getHelloMessageAsEncodedString());
 				}
 			};
 			//We send Hello message before reaching the maximum time
