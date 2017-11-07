@@ -18,7 +18,7 @@ class RandomAlphanumeric {
 }
 
 
-public class HelloSender implements SimpleMessageHandler, Runnable {
+public class HelloSender implements SimpleMessageHandler {
 
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);

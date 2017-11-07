@@ -1,5 +1,5 @@
 
-public class DebugReceiver implements SimpleMessageHandler, Runnable {
+public class DebugReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	
