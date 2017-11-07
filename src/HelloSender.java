@@ -22,7 +22,7 @@ public class HelloSender implements SimpleMessageHandler {
 
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	private Timer TIMER = new Timer("SendingTimer", true);;
+	private Timer TIMER = new Timer("SendingTimer", true);
 
 	public void run() {
 		try {

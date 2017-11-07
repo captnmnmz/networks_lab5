@@ -90,7 +90,19 @@ public class PeerTable {
 	
 
 	public synchronized String toString(){
-		return table.toString();
+		if(table.size() == 0) {
+			return "" ;
+		}
+		String PeerList= "";
+		if(!table.keySet().isEmpty()){
+			for (String id : table.keySet()){
+				if (PeerTable.getPeer(id)!=null){
+					PeerList+= PeerTable.getPeer(id);
+
+				}
+			}
+		}
+		return PeerList;
 	}
 
 
