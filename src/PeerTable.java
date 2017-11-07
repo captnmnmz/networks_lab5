@@ -8,7 +8,8 @@ import java.util.NoSuchElementException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 class PeerRecord{
 	String peerID;
@@ -17,23 +18,24 @@ class PeerRecord{
 	double expirationTime;
 	PeerState peerState;
 
-	public PeerRecord(String peerID,InetAddress peerIPAddress, int peerSeqNum, double expirationTime, PeerState peerState){
+	public PeerRecord(String peerID,InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
 		this.peerID=peerID;
 		this.peerIPAddress=peerIPAddress;
 		this.peerSeqNum=peerSeqNum;
-		this.expirationTime=expirationTime;
+		this.expirationTime=HelloInterval*1000+System.currentTimeMillis();
 		this.peerState=peerState;
 	}
 }
 
 public class PeerTable {
-	Hashtable<String,PeerRecord> table;
+	HashMap<String,PeerRecord> table;
 
-	public synchronized void addPeer(PeerRecord peerRecord){
-		table.put(peerRecord.peerID, peerRecord);
+	public synchronized void addPeer(String peerID, InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
+		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, peerSeqNum, HelloInterval, peerState);
+		table.put(peerID, peer);
 	}
 
-	public synchronized PeerRecord getPeer(String peerID){
+	public synchronized String getPeer(String peerID){
 		if (table.containsKey(peerID)){
 			PeerRecord peer = table.get(peerID);
 			if (peer.expirationTime<System.currentTimeMillis()){
@@ -41,15 +43,35 @@ public class PeerTable {
 				table.remove(peerID);
 				return null;
 			}else{
-				return peer;
+				return peer.peerID;
 			}
 		}
 		return null;
 
 	}
+	
+	public synchronized LinkedList<String> getPeersID(){
+		LinkedList<String> peers = new LinkedList<String>();
+		for (String id : table.keySet()){
+			if (this.getPeer(id)!=null){
+				peers.add(this.getPeer(id));
+			}
+		}
+		return peers;
+	}
 
-	public synchronized boolean contains(PeerRecord peerRecord){
-		return table.containsKey(peerRecord.peerID);
+	public synchronized boolean containsPeer(String peerID){
+		if (table.containsKey(peerID)){
+			PeerRecord peer = table.get(peerID);
+			if (peer.expirationTime<System.currentTimeMillis()){
+				peer.peerState=PeerState.DYING;
+				table.remove(peerID);
+				return false;
+			}else{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public synchronized String toString(){
