@@ -36,11 +36,19 @@ public class MuxDemuxSimple implements Runnable {
 					byte[] bufferReceived = new byte[512];
 					DatagramPacket dpReceived;
 					try {
-						dpReceived = new DatagramPacket(bufferReceived,bufferReceived.length,InetAddress.getByName(ADDRESS),PORT);
+						dpReceived = new DatagramPacket(
+											bufferReceived,
+											bufferReceived.length,
+											InetAddress.getByName(ADDRESS),
+											PORT);
 						myS.receive(dpReceived);
-						String message = new String(dpReceived.getData());
+						int endIndex = dpReceived.getLength();
+						String peerIPAddress = dpReceived.getAddress().toString();
+						System.out.println(peerIPAddress);
+						String message = new String(dpReceived.getData()).substring(0, endIndex);
+						String payload = peerIPAddress + ";" + message;
 						for (int i=0; i<myMessageHandlers.length; i++){
-							myMessageHandlers[i].handleMessage(message);
+							myMessageHandlers[i].handleMessage(payload);
 						}
 					} catch (UnknownHostException e){
 					} catch (IOException e) {
@@ -87,7 +95,6 @@ public class MuxDemuxSimple implements Runnable {
 						byte[] buf = broadcastMessage.getBytes();
 						DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ADDRESS), PORT);
 						broadcast_s.send(packet);
-						broadcast_s.close();
 					} catch (UnknownHostException e) {
 						System.err.println(e.getMessage());
 					} catch (IOException e) {
