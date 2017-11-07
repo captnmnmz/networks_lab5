@@ -91,7 +91,6 @@ public class MuxDemuxSimple implements Runnable {
 					try {
 						String broadcastMessage = outgoing.dequeue();
 						DatagramSocket broadcast_s= myS;
-						broadcast_s.setBroadcast(true);
 						byte[] buf = broadcastMessage.getBytes();
 						DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(ADDRESS), PORT);
 						broadcast_s.send(packet);

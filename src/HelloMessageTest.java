@@ -7,6 +7,7 @@ public class HelloMessageTest {
 	public static void main(String[] args) {
 		try {
 			DatagramSocket mySocket = new DatagramSocket(4242);
+			mySocket.setBroadcast(true);
 			SimpleMessageHandler[] handlers = new SimpleMessageHandler[3];
 			handlers[0]= new HelloReceiver();
 			handlers[1]= new HelloSender();
