@@ -25,7 +25,9 @@ public class HelloSender implements SimpleMessageHandler, Runnable {
 
 	public void run() {
 		try {
+			//Generate a random senderID
 			String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
+			//Generate a random HelloInterval < 256
 			int HelloInterval = new Random().nextInt(256);
 			HelloMessage m = new HelloMessage(senderID,1,HelloInterval);
 			TimerTask task = new TimerTask() {
@@ -33,9 +35,10 @@ public class HelloSender implements SimpleMessageHandler, Runnable {
 				public void run() {
 					myMuxDemux.send(m.getHelloMessageAsEncodedString());
 				}
-			}; 
-			TIMER.schedule(task, 0, HelloInterval);
-
+			};
+			//We send Hello message before reaching the maximum time
+			int delay = new Random().nextInt(HelloInterval);
+			TIMER.schedule(task,delay);
 		}catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}
