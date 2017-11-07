@@ -2,6 +2,7 @@ import java.lang.Object;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.LinkedList;
 
 class RandomAlphanumeric {
 	private static String letters = "abcdefghijklmnopqrstuvwxyz";
@@ -25,17 +26,24 @@ public class HelloSender implements SimpleMessageHandler, Runnable {
 
 	public void run() {
 		try {
+			//Generate a random senderID
 			String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
+			//Generate a random HelloInterval < 256
 			int HelloInterval = new Random().nextInt(256);
 			HelloMessage m = new HelloMessage(senderID,1,HelloInterval);
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
+					LinkedList<String> list_peers = PeerTable.getPeersID();
+					for (int i=0; i<list_peers.size() ; i++) {
+						m.addPeer(list_peers.get(i));
+					}
 					myMuxDemux.send(m.getHelloMessageAsEncodedString());
 				}
-			}; 
-			TIMER.schedule(task, 0, HelloInterval);
-
+			};
+			//We send Hello message before reaching the maximum time
+			int delay = new Random().nextInt(HelloInterval);
+			TIMER.schedule(task,delay);
 		}catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}
