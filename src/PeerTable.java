@@ -51,9 +51,11 @@ public class PeerTable {
 	
 	public static synchronized LinkedList<String> getPeersID(){
 		LinkedList<String> peers = new LinkedList<String>();
-		for (String id : table.keySet()){
-			if (PeerTable.getPeer(id)!=null){
-				peers.add(PeerTable.getPeer(id));
+		if (!table.keySet().isEmpty()){
+			for (String id : table.keySet()){
+				if (PeerTable.getPeer(id)!=null){
+					peers.add(PeerTable.getPeer(id));
+				}
 			}
 		}
 		return peers;
