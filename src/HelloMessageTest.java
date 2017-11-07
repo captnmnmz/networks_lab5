@@ -1,11 +1,12 @@
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class HelloMessageTest {
 
 	public static void main(String[] args) {
 		try {
-			Socket mySocket = new Socket();
+			Socket mySocket = new Socket(InetAddress.getByName("255.255.255.255"),4242);
 			SimpleMessageHandler[] handlers = new SimpleMessageHandler[3];
 			handlers[0]= new HelloReceiver();
 			handlers[1]= new HelloSender();

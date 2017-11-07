@@ -28,7 +28,7 @@ class PeerRecord{
 }
 
 public class PeerTable {
-	private static HashMap<String,PeerRecord> table;
+	private static HashMap<String,PeerRecord> table = new HashMap<String,PeerRecord>() ;
 
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
@@ -51,9 +51,11 @@ public class PeerTable {
 	
 	public static synchronized LinkedList<String> getPeersID(){
 		LinkedList<String> peers = new LinkedList<String>();
-		for (String id : table.keySet()){
-			if (PeerTable.getPeer(id)!=null){
-				peers.add(PeerTable.getPeer(id));
+		if(!table.keySet().isEmpty()) {
+			for (String id : table.keySet()){
+				if (PeerTable.getPeer(id)!=null){
+					peers.add(PeerTable.getPeer(id));
+				}
 			}
 		}
 		return peers;

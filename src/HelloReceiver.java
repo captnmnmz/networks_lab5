@@ -12,7 +12,7 @@ public class HelloReceiver implements SimpleMessageHandler {
 				HelloMessage hm = new HelloMessage(received);
 				
 				if (!PeerTable.containsPeer(hm.getSenderId())) {
-					PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255"), hm.getHelloInterval());;
+					PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
 				}
 				//Update peer in any case
 				PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber());
