@@ -28,9 +28,11 @@ public class HelloSender implements SimpleMessageHandler {
 	public void run() {
 		try {
 			//Generate a random senderID
-			String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
+			//String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
+			String senderID = "Yates";
 			//Generate a random HelloInterval < 256
-			int HelloInterval = new Random().nextInt(256);
+			//int HelloInterval = new Random().nextInt(256);
+			int HelloInterval = 253;
 			HelloMessage m = new HelloMessage(senderID,-1,HelloInterval);
 			TimerTask task = new TimerTask() {
 				@Override
@@ -46,7 +48,7 @@ public class HelloSender implements SimpleMessageHandler {
 			};
 			//We send Hello message before reaching the maximum time
 			int delay = new Random().nextInt(HelloInterval);
-			TIMER.schedule(task,0,delay);
+			TIMER.schedule(task,0,250);
 		}catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}

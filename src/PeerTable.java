@@ -37,31 +37,7 @@ public class PeerTable {
 		table.put(peerID, peer);
 	}
 
-	public static synchronized String getPeer(String peerID){
-		if (table.containsKey(peerID)){
-			PeerRecord peer = table.get(peerID);
-			if (peer.expirationTime<System.currentTimeMillis()){
-				table.remove(peerID);
-				return null;
-			}else{
-				return peer.peerID;
-			}
-		}
-		return null;
 
-	}
-	
-	public static synchronized LinkedList<String> getPeersID(){
-		LinkedList<String> peers = new LinkedList<String>();
-		if(!table.keySet().isEmpty()) {
-			for (String id : table.keySet()){
-				if (PeerTable.getPeer(id)!=null){
-					peers.add(PeerTable.getPeer(id));
-				}
-			}
-		}
-		return peers;
-	}
 
 	public static synchronized boolean containsPeer(String peerID){
 		if (table.containsKey(peerID)){
@@ -98,14 +74,30 @@ public class PeerTable {
 			return PeerList ;
 		}
 		if(!table.keySet().isEmpty()){
+			PeerTable.cleanUp();
 			for (String id : table.keySet()){
-				if (PeerTable.getPeer(id)!=null){
-					PeerList.add(PeerTable.getPeer(id));
+				PeerList.add(table.get(id).peerID);
 
+			}
+			
+		}
+		return PeerList;
+	}
+	
+	private static synchronized void cleanUp(){
+		List<String> toRemove = new ArrayList<String>();
+		if (!table.keySet().isEmpty()){
+			for (String id : table.keySet()){
+				if (table.get(id).expirationTime<System.currentTimeMillis()){
+					toRemove.add(id);
 				}
 			}
 		}
-		return PeerList;
+		if (!toRemove.isEmpty()){
+			for (String _id : toRemove){
+				table.remove(_id);
+			}
+		}
 	}
 
 
