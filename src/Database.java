@@ -1,11 +1,13 @@
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Database {
 	//Sequence number of the database
 	private int seqNum;
 	//PeerID of the owner of the database
-	private String owner;
+	private static String owner;
 	//List of databases of peers : the database of a peer is identified by the ID of this specified peer
 	private static HashMap<String,HashMap<String,PeerRecord>> db_peers = new HashMap<String,HashMap<String,PeerRecord>>();
 	
@@ -16,16 +18,30 @@ public class Database {
 		
 		//TODO Add itself to its database ?  
 		
-		
 		this.seqNum = -1;
 	}
 	
-	public synchronized void getOwnDatabase() {
-		
+	
+	public synchronized HashMap<String,PeerRecord> getOwnDatabase() {
+		return db_peers.get(owner);
 	}
 	
-	public synchronized void getPeerDatabase() {
-		
+	public synchronized HashMap<String,PeerRecord> getPeerDatabase(String peerID) {
+		return db_peers.get(peerID); 
+	}
+	
+	public static synchronized void updatePeer(String peerID, int seqNumber){
+		HashMap<String,PeerRecord> table = db_peers.get(owner);
+		PeerRecord peer = table.get(peerID);
+		if (peer.peerSeqNum!=seqNumber){
+			peer.peerState=PeerState.INCONSISTENT;
+		}
+		if (peer.peerState==PeerState.INCONSISTENT){
+			peer.peerState=PeerState.INCONSISTENT;
+		}
+		if (peer.peerState==PeerState.INCONSISTENT && peer.peerSeqNum==seqNumber){
+			peer.peerState=PeerState.SYNCHRONIZED;
+		}
 	}
 	
 	/**
@@ -51,5 +67,48 @@ public class Database {
 		HashMap<String,PeerRecord> table = db_peers.get(owner);
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
 		table.put(peerID, peer);
+		//Evolution of the sequence number
+		seqNum +=1;
+	}
+	
+	public static synchronized List<String> sendPeersID(String peerID){
+		HashMap<String,PeerRecord> table = db_peers.get(peerID);
+		List<String> PeerList= new ArrayList<String>();
+		if(table.size() == 0) {
+			return PeerList ;
+		}
+		if(!table.keySet().isEmpty()){
+			Database.cleanUp(peerID);
+			for (String id : table.keySet()){
+				PeerList.add(table.get(id).peerID);
+
+			}
+			
+		}
+		return PeerList;
+	}
+	
+	/**
+	 * Remove element of the peer's database corresponding to the specified peerID
+	 * 
+	 * @param peerID
+	 *
+	 */
+	
+	private static synchronized void cleanUp(String peerID){
+		HashMap<String,PeerRecord> table = db_peers.get(peerID);
+		List<String> toRemove = new ArrayList<String>();
+		if (!table.keySet().isEmpty()){
+			for (String id : table.keySet()){
+				if (table.get(id).expirationTime<System.currentTimeMillis()){
+					toRemove.add(id);
+				}
+			}
+		}
+		if (!toRemove.isEmpty()){
+			for (String _id : toRemove){
+				table.remove(_id);
+			}
+		}
 	}
 }
