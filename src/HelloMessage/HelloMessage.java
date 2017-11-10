@@ -1,8 +1,11 @@
+package HelloMessage;
 
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import materials.PeerTable;
 
 public class HelloMessage {
 	private String senderID;

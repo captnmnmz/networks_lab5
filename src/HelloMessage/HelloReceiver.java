@@ -1,5 +1,11 @@
+package HelloMessage;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import materials.MuxDemuxSimple;
+import materials.PeerTable;
+import materials.SimpleMessageHandler;
+import materials.SynchronizedQueue;
 
 public class HelloReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;

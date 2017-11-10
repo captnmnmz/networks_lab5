@@ -1,3 +1,7 @@
+package HelloMessage;
+import materials.MuxDemuxSimple;
+import materials.SimpleMessageHandler;
+import materials.SynchronizedQueue;
 
 public class DebugReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;

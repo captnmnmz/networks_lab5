@@ -1,6 +1,10 @@
+package HelloMessage;
 
 
 import java.util.NoSuchElementException;
+import materials.MuxDemuxSimple;
+import materials.SimpleMessageHandler;
+import materials.SynchronizedQueue;
 
 public class HelloHandler implements SimpleMessageHandler, Runnable{
 	
