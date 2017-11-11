@@ -17,6 +17,7 @@ public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	private String SENDER = "Chevallier";
+	private int SYNINTERVAL = 150;
 	
 	@Override
 	public void run() {
@@ -24,7 +25,12 @@ public class SynSender implements SimpleMessageHandler {
 		for (PeerRecord peer : toSynchronize) {
 			SynMessage message = new SynMessage(SENDER,peer.getPeerSeqNum(),peer.getPeerId());
 			myMuxDemux.send(message.getSynMessageAsEncodedString());
-			//WAIT ANSWER "LIST" FROM PEER
+			try {
+				Thread.sleep(SYNINTERVAL);
+				//WAIT ANSWER "LIST" FROM PEER OR RESEND
+			} catch (InterruptedException e) {
+				System.err.println("Sleep rose an error: " + e.getMessage());
+			}
 		}
 	}
 	
