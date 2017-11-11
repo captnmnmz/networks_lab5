@@ -14,22 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-class PeerRecord{
-	String peerID;
-	InetAddress peerIPAddress;
-	int peerSeqNum;
-	double expirationTime;
-	PeerState peerState;
-
-	public PeerRecord(String peerID,InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
-		this.peerID=peerID;
-		this.peerIPAddress=peerIPAddress;
-		this.peerSeqNum=peerSeqNum;
-		this.expirationTime=HelloInterval*1000+System.currentTimeMillis();
-		this.peerState=peerState;
-	}
-}
-
 public class PeerTable {
 	private static HashMap<String,PeerRecord> table = new HashMap<String,PeerRecord>() ;
 
@@ -44,7 +28,7 @@ public class PeerTable {
 		if (table.containsKey(peerID)){
 			PeerRecord peer = table.get(peerID);
 			if (peer.expirationTime<System.currentTimeMillis()){
-				peer.peerState=PeerState.DYING;
+				peer.setPeerState(PeerState.DYING);
 				table.remove(peerID);
 				return false;
 			}else{
@@ -56,14 +40,14 @@ public class PeerTable {
 	
 	public static synchronized void updatePeer(String peerID, int seqNumber){
 		PeerRecord peer = table.get(peerID);
-		if (peer.peerSeqNum!=seqNumber){
-			peer.peerState=PeerState.INCONSISTENT;
+		if (peer.getPeerSeqNum()!=seqNumber){
+			peer.setPeerState(PeerState.INCONSISTENT);
 		}
-		if (peer.peerState==PeerState.INCONSISTENT){
-			peer.peerState=PeerState.INCONSISTENT;
+		if (peer.getPeerState()==PeerState.INCONSISTENT){
+			peer.setPeerState(PeerState.INCONSISTENT);
 		}
-		if (peer.peerState==PeerState.INCONSISTENT && peer.peerSeqNum==seqNumber){
-			peer.peerState=PeerState.SYNCHRONIZED;
+		if (peer.getPeerState()==PeerState.INCONSISTENT && peer.getPeerSeqNum()==seqNumber){
+			peer.setPeerState(PeerState.SYNCHRONIZED);
 		}
 	}
 	
@@ -77,7 +61,7 @@ public class PeerTable {
 		if(!table.keySet().isEmpty()){
 			PeerTable.cleanUp();
 			for (String id : table.keySet()){
-				PeerList.add(table.get(id).peerID);
+				PeerList.add(table.get(id).getPeerId());
 
 			}
 			
@@ -85,7 +69,7 @@ public class PeerTable {
 		return PeerList;
 	}
 	
-	private static synchronized void cleanUp(){
+	public static synchronized void cleanUp(){
 		List<String> toRemove = new ArrayList<String>();
 		if (!table.keySet().isEmpty()){
 			for (String id : table.keySet()){

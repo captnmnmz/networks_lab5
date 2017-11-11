@@ -23,25 +23,29 @@ public class Database {
 	}
 	
 	
-	public synchronized HashMap<String,PeerRecord> getOwnDatabase() {
+	public synchronized static HashMap<String,PeerRecord> getOwnDatabase() {
 		return db_peers.get(owner);
 	}
 	
-	public synchronized HashMap<String,PeerRecord> getPeerDatabase(String peerID) {
+	public synchronized  static HashMap<String,PeerRecord> getPeerDatabase(String peerID) {
 		return db_peers.get(peerID); 
 	}
 	
-	public static synchronized void updatePeer(String peerID, int seqNumber){
+	public synchronized void updatePeer(String peerID, int seqNumber){
 		HashMap<String,PeerRecord> table = db_peers.get(owner);
 		PeerRecord peer = table.get(peerID);
-		if (peer.peerSeqNum!=seqNumber){
-			peer.peerState=PeerState.INCONSISTENT;
+		if (peer.getPeerSeqNum()!=seqNumber){
+			peer.setPeerState(PeerState.INCONSISTENT);
+			// Notify the thread in SynSender of the modification of state
+			notify();
 		}
-		if (peer.peerState==PeerState.INCONSISTENT){
-			peer.peerState=PeerState.INCONSISTENT;
+		if (peer.getPeerState()==PeerState.INCONSISTENT){
+			peer.setPeerState(PeerState.INCONSISTENT);
+			// Notify the thread in SynSender of the modification of state
+			notify();
 		}
-		if (peer.peerState==PeerState.INCONSISTENT && peer.peerSeqNum==seqNumber){
-			peer.peerState=PeerState.SYNCHRONIZED;
+		if (peer.getPeerState()==PeerState.INCONSISTENT && peer.getPeerSeqNum()==seqNumber){
+			peer.setPeerState(PeerState.SYNCHRONIZED);
 		}
 	}
 	
@@ -72,7 +76,7 @@ public class Database {
 		seqNum +=1;
 	}
 	
-	public static synchronized List<String> sendPeersID(String peerID){
+	public synchronized List<String> sendPeersID(String peerID){
 		HashMap<String,PeerRecord> table = db_peers.get(peerID);
 		List<String> PeerList= new ArrayList<String>();
 		if(table.size() == 0) {
@@ -81,7 +85,7 @@ public class Database {
 		if(!table.keySet().isEmpty()){
 			Database.cleanUp(peerID);
 			for (String id : table.keySet()){
-				PeerList.add(table.get(id).peerID);
+				PeerList.add(table.get(id).getPeerId());
 
 			}
 			
