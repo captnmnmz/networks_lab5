@@ -35,10 +35,10 @@ public class HelloSender implements SimpleMessageHandler {
 		try {
 			//Generate a random senderID
 			//String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
-			String senderID = "Yates";
+			String senderID = myMuxDemux.getID();
 			//Generate a random HelloInterval < 256
 			//int HelloInterval = new Random().nextInt(256);
-			int HelloInterval = 253;
+			int HelloInterval = myMuxDemux.getHelloInterval();
 			HelloMessage m = new HelloMessage(senderID,-1,HelloInterval);
 			TimerTask task = new TimerTask() {
 				@Override

@@ -13,7 +13,7 @@ public class HelloMessageTest {
 			handlers[0]= new HelloReceiver();
 			handlers[1]= new HelloSender();
 			handlers[2]= new DebugReceiver();
-			MuxDemuxSimple dm = new MuxDemuxSimple(handlers, mySocket);
+			MuxDemuxSimple dm = new MuxDemuxSimple(handlers, mySocket,"Oliver", 254);
 			new Thread(handlers[0]).start();
 			new Thread(handlers[1]).start();
 			new Thread(handlers[2]).start();

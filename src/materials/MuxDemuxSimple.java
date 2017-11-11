@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 
 public class MuxDemuxSimple implements Runnable {
 	private final Boolean broadcast = true;
@@ -18,10 +19,22 @@ public class MuxDemuxSimple implements Runnable {
 	private SynchronizedQueue outgoing = new SynchronizedQueue(20);
     private final String ADDRESS = "255.255.255.255";
     private final int PORT = 4242;
+    private Database my_db=null;
+    private HashMap<String,Database> peers_db;
+    private String peerID;
+    private int HelloInterval;
 	
-	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s) {
+	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s, String peerID, int HelloInterval) {
 		myS= s;
 		myMessageHandlers = h;
+		this.HelloInterval=HelloInterval;
+		try{
+			my_db=new Database(peerID, InetAddress.getByName(ADDRESS), HelloInterval);
+			my_db.updateDB();
+		}catch(UnknownHostException e){
+			System.err.println("My inetadress is unknown");
+		}
+		peers_db=new HashMap<String,Database>();
 	}
 	
 	public void run() {
@@ -117,5 +130,13 @@ public class MuxDemuxSimple implements Runnable {
 		}catch(Exception e ) {
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public String getID(){
+		return this.peerID;
+	}
+	
+	public int getHelloInterval(){
+		return this.HelloInterval;
 	}
 }

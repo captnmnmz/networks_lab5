@@ -69,6 +69,23 @@ public class PeerTable {
 		return PeerList;
 	}
 	
+	public static synchronized HashMap<String,Integer> sendDBData(){
+		HashMap<String,Integer> db = new HashMap<String,Integer>();
+		if(table.size() == 0) {
+			return db;
+		}
+		if(!table.keySet().isEmpty()){
+			PeerTable.cleanUp();
+			for (String id : table.keySet()){
+
+				db.put(id, table.get(id).getPeerSeqNum());
+
+			}
+			
+		}
+		return db;
+	}
+	
 	public static synchronized void cleanUp(){
 		List<String> toRemove = new ArrayList<String>();
 		if (!table.keySet().isEmpty()){
