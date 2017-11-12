@@ -168,6 +168,7 @@ public class HelloMessage {
 	 * @return if there is no peer, the method return an empty LinkedList<String>
 	 * 
 	 */
+	
 	public List<String> getPeers() {
 		return this.peers;
 	}

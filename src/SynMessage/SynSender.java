@@ -29,7 +29,7 @@ public class SynSender implements SimpleMessageHandler {
 				Thread.sleep(SYNINTERVAL);
 				//WAIT ANSWER "LIST" FROM PEER OR RESEND
 			} catch (InterruptedException e) {
-				System.err.println("Sleep rose an error: " + e.getMessage());
+				System.err.println("Error risen by sleep(SYNINTERVAL) : " + e.getMessage());
 			}
 		}
 	}

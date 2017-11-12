@@ -45,6 +45,7 @@ public class Database {
 		if(!db.keySet().isEmpty()){
 			for (String id : db.keySet()){
 				data+=id;
+				//TODO data += ";";
 				data+=Integer.toString(db.get(id));
 			}
 		}
