@@ -6,16 +6,8 @@ import materials.MuxDemuxSimple;
 import materials.PeerRecord;
 import materials.PeerTable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 import java.util.TimerTask;
 import java.util.Timer;
-
-import materials.PeerRecord;
-import materials.PeerState;
-import materials.Database;
 
 
 
@@ -45,7 +37,15 @@ public class SynSender implements SimpleMessageHandler {
 				}
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
-
+			//Wait for receiving ListMessage 
+			synchronized(myMuxDemux.getMonitor()) {
+				try {
+					myMuxDemux.getMonitor().wait();
+				} catch (InterruptedException e) {
+					System.err.println(e.getMessage());;
+				}
+			}
+			task.cancel();
 			
 		}
 	}

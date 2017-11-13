@@ -22,6 +22,8 @@ public class MuxDemuxSimple implements Runnable {
     private Database my_db=null;
     private HashMap<String,Database> peers_db;
     private String peerID;
+    //Monitor shared by SynSender and ListSender
+    private Object Monitor = new Object();
     private int HelloInterval;
 	
 	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s, String peerID, int HelloInterval) {
@@ -141,5 +143,9 @@ public class MuxDemuxSimple implements Runnable {
 	
 	public Database getDatabase() {
 		return this.my_db;
+	}
+	
+	public Object getMonitor() {
+		return this.Monitor;
 	}
 }

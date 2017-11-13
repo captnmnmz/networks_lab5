@@ -19,7 +19,7 @@ public class SynReceiver implements SimpleMessageHandler {
 				SynMessage sm = new SynMessage(message); // throws IllegalArgumentException
 				
 				//The message is for me and I'm not in the process of sending LIST messages to this peer
-				if (myMuxDemux.getID().equals(sm.getPeerId()) && processing.equals(sm.getSenderId())) {
+				if (myMuxDemux.getID().equals(sm.getPeerId()) && !processing.equals(sm.getSenderId())) {
 					processing = sm.getSenderId();
 					// Verify if the sequenceNo refers to our current database
 					if(sm.getSequenceNumber() == myMuxDemux.getDatabase().getDatabaseSequenceNumber()) {

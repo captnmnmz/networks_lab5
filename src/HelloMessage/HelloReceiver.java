@@ -26,7 +26,13 @@ public class HelloReceiver implements SimpleMessageHandler {
 				System.out.println("Received : " +message);
 				
 			}catch(IllegalArgumentException e) {
-				System.out.println(e.getMessage());
+				if(e.getMessage().equals("The message must begin by HELLO \n\r "
+						+"The string is supposed to be formatted as : HELLO;senderID;sequence#;HelloInterval;NumPeers;peer1;peer2;….;peerN")) {
+						//Do nothing : the message wasn't a HelloMessage
+				}else {
+					//The HelloMessage wasn't formatted as it was supposed to be
+					System.err.println(e.getMessage());
+				}
 			} catch (UnknownHostException e) {
 				System.out.println(e.getMessage());
 			}
