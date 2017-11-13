@@ -13,6 +13,7 @@ public class Database {
 	private  HashMap<String,Integer> db = new HashMap<String,Integer>();
 	
 	private String tempData="theData";
+	
 	public Database(String myPeerID, InetAddress myAddress, int myHelloInterval) {
 		this.owner = myPeerID;
 		this.seqNum = -1;
@@ -26,8 +27,11 @@ public class Database {
 	}
 	
 	public synchronized String getData(){
-		
 		return tempData;
+	}
+	
+	public synchronized void setData(String data) {
+		this.tempData = data;
 	}
 	
 

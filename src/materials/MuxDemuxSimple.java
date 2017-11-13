@@ -145,6 +145,10 @@ public class MuxDemuxSimple implements Runnable {
 		return this.my_db;
 	}
 	
+	public HashMap<String,Database> getPeerDatabase(){
+		return this.peers_db;
+	}
+	
 	public Object getMonitor() {
 		return this.Monitor;
 	}

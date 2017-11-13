@@ -4,7 +4,6 @@ import materials.SimpleMessageHandler;
 import materials.SynchronizedQueue;
 import materials.MuxDemuxSimple;
 import ListMessage.ListMessage;
-import materials.Database;
 
 public class SynReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;

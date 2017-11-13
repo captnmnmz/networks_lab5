@@ -1,10 +1,5 @@
 package ListMessage;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import materials.PeerTable;
-
 public class ListMessage {
 
 	private String senderID;
@@ -18,17 +13,17 @@ public class ListMessage {
 	 * This method populates the attributes of the HelloMessage object.
 	 * 
 	 * @param s
-	 * 			String formatted as "HELLO;senderID;sequence#;HelloInterval;NumPeers;peer1;peer2;….;peerN"
+	 * 			String formatted as "LIST;senderID;peerID;sequence#;TotalParts;part#;data;"
 	 *
 	 */
 
-	public ListMessage(String s) {
-		try {
-			String[] _s = s.split(";");
-			//Verify that the first item is "LIST" ?
+	public ListMessage(String s) throws IllegalArgumentException {
+		String[] _s = s.split(";");
+		//Verify that the first item is "LIST" ?
 
-			//Verify the number of features 
-			if(_s[0].equals("LIST") && _s.length==7) {
+		//Verify the number of features 
+		if(_s[0].equals("LIST")) {
+			if(_s.length==7) {
 
 				//Verify that senderID contains only characters A-Z a-z and 0-9 
 				if (!_s[1].matches("[^\\w\\d\\;]")) {
@@ -50,35 +45,49 @@ public class ListMessage {
 									if(_s[6].length()<=255) {
 										data =_s[6];
 									}else {
-										throw new IllegalArgumentException("data is a text string of max 255 characters");
+										throw new IllegalArgumentException("data is a text string of max 255 characters \n\r"
+												+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 									}
 								}else {
-									throw new IllegalArgumentException("Impossible to get part# > TotalParts");
+									throw new IllegalArgumentException("Impossible to get part# > TotalParts \n\r"
+											+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 								}
 							}else {
-								throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters");
+								throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters \n\r"
+										+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 							}
 						}else {
-							throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 ");
+							throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 \n\r"
+									+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 						}
 					}else {
-						throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters");
+						throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters \n\r"
+								+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 					}
 				}else {
-					throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 ");
+					throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 \n\r"
+							+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 				}
 			}else {
-				throw new IllegalArgumentException("The message must begin by LIST and must have 7 features") ;
+				throw new IllegalArgumentException(" The ListMessage must have 7 features \n\r"
+						+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;") ;
 			}
-		}catch(IllegalArgumentException e) {
-			System.err.println("The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
-			System.err.println(e.getMessage());
+		}else {
+			throw new IllegalArgumentException("The message must begin by LIST \n\r"
+					+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 		}
 	}
 
 	/**
-	 * This method populates the attributes of the HelloMessage object.
 	 * 
+	 * This method populates the attributes of the ListMessage object.
+	 * 
+	 * @param senderID
+	 * @param sequenceNo
+	 * @param peerID
+	 * @param totalpart
+	 * @param part_Number
+	 * @param data
 	 */
 	public ListMessage(String senderID, int sequenceNo, String peerID, int totalpart,int part_Number, String data)  {
 		//Verify that senderID contains only characters A-Z a-z and 0-9 
@@ -101,22 +110,28 @@ public class ListMessage {
 							if(data.length()<=255) {
 								this.data =data;
 							}else {
-								throw new IllegalArgumentException("data is a text string of max 255 characters");
+								throw new IllegalArgumentException("data is a text string of max 255 characters \n\r"
+										+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 							}
 						}else {
-							throw new IllegalArgumentException("Impossible to get part# > TotalParts");
+							throw new IllegalArgumentException("Impossible to get part# > TotalParts \n\r"
+									+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 						}
 					}else {
-						throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters");
+						throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters \n\r"
+								+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 					}
 				}else {
-					throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 ");
+					throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 \n\r"
+							+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 				}
 			}else {
-				throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters");
+				throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters \n\r"
+						+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 			}
 		}else {
-			throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 ");
+			throw new IllegalArgumentException("The id must contain only characters A-Z a-z and 0-9 \n\r"
+					+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 		}
 	}
 
@@ -150,6 +165,10 @@ public class ListMessage {
 	public String getSenderId() {
 		return this.senderID;
 	}
+	
+	public String getPeerId() {
+		return this.peerID;
+	}
 
 	public int getSequenceNumber() {
 		return this.sequence_num;
@@ -162,7 +181,7 @@ public class ListMessage {
 	public int getTotalParts() {
 		return this.TotalParts;
 	}
-	
+
 	public String getData() {
 		return this.data;
 	}
