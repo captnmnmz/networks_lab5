@@ -30,7 +30,6 @@ public class MuxDemuxSimple implements Runnable {
 		this.HelloInterval=HelloInterval;
 		try{
 			my_db=new Database(peerID, InetAddress.getByName(ADDRESS), HelloInterval);
-			my_db.updateDB();
 		}catch(UnknownHostException e){
 			System.err.println("My inetadress is unknown");
 		}

@@ -17,7 +17,7 @@ import java.util.List;
 public class PeerTable {
 	private static HashMap<String,PeerRecord> table = new HashMap<String,PeerRecord>() ;
 	
-	private BlockingListQueue queue;
+	public static BlockingListQueue queue = new BlockingListQueue();
 
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
@@ -43,12 +43,16 @@ public class PeerTable {
 	public static synchronized void updatePeer(String peerID, int seqNumber){
 		PeerRecord peer = table.get(peerID);
 		if (peer.getPeerSeqNum()!=seqNumber){
+			if (peer.getPeerState()==PeerState.SYNCHRONIZED){
+				queue.enqueue(peer);
+			}
 			peer.setPeerState(PeerState.INCONSISTENT);
+			
 		}
 		if (peer.getPeerState()==PeerState.INCONSISTENT){
 			peer.setPeerState(PeerState.INCONSISTENT);
 		}
-		if (peer.getPeerState()==PeerState.INCONSISTENT && peer.getPeerSeqNum()==seqNumber){
+		if (peer.getPeerState()==PeerState.SYNCHRONIZED && peer.getPeerSeqNum()==seqNumber){
 			peer.setPeerState(PeerState.SYNCHRONIZED);
 		}
 	}
@@ -103,6 +107,8 @@ public class PeerTable {
 			}
 		}
 	}
+	
+
 
 
 }

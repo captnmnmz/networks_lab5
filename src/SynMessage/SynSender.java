@@ -9,57 +9,47 @@ import materials.PeerTable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+import java.util.TimerTask;
+import java.util.Timer;
+
 import materials.PeerRecord;
 import materials.PeerState;
 import materials.Database;
+
+
 
 public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	private String SENDER = "Chevallier";
+	//TODO change syninterval
 	private int SYNINTERVAL = 150;
+	private Timer TIMER = new Timer("SynTimer", true);
 	
 	@Override
 	public void run() {
-		List<PeerRecord> toSynchronize = this.identifyUnsynchronizedPeer();
-		for (PeerRecord peer : toSynchronize) {
+		while(true){
+			PeerRecord peer = PeerTable.queue.dequeue();
 			SynMessage message = new SynMessage(SENDER,peer.getPeerSeqNum(),peer.getPeerId());
-			myMuxDemux.send(message.getSynMessageAsEncodedString());
-			try {
-				Thread.sleep(SYNINTERVAL);
-				//WAIT ANSWER "LIST" FROM PEER OR RESEND
-			} catch (InterruptedException e) {
-				System.err.println("Error risen by sleep(SYNINTERVAL) : " + e.getMessage());
-			}
+			TimerTask task = new TimerTask() {
+				@Override
+				public void run() {
+					//TODO change while to condition where it stops when LIST message received
+					while(true){
+						if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
+							myMuxDemux.send(message.getSynMessageAsEncodedString());
+						}
+					}
+
+				}
+			};
+			TIMER.schedule(task,0,SYNINTERVAL);
+
+			
 		}
 	}
 	
-	public synchronized List<PeerRecord> identifyUnsynchronizedPeer() {
-		List<PeerRecord> UnsynchronizedPeer = new ArrayList<PeerRecord>();
-		try {
-			//Wait for modification of PeerState in the Database
-			wait();
-			//Send a SYN message to the unsynchronized peer
-			HashMap<String,PeerRecord> mydb = Database.getOwnDatabase();
-			//Find the unsynchronised peer
-			if(!mydb.keySet().isEmpty()){
-				PeerTable.cleanUp();
-				for (String id : mydb.keySet()){
-					if(mydb.get(id).getPeerState()==PeerState.INCONSISTENT) {
-						UnsynchronizedPeer.add(mydb.get(id));
-					}
-					if(mydb.get(id).getPeerState()==PeerState.HEARD) {
-						//TODO
-					}
-				}
-			}
-			return UnsynchronizedPeer;
-		} catch (InterruptedException e) {
-			System.err.println(e);
-			return UnsynchronizedPeer;
-		}
-		
-	}
 
 	@Override
 	public void handleMessage(String m) {
