@@ -139,4 +139,8 @@ public class MuxDemuxSimple implements Runnable {
 	public int getHelloInterval(){
 		return this.HelloInterval;
 	}
+	
+	public Database getDatabase() {
+		return this.my_db;
+	}
 }
