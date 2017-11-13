@@ -16,6 +16,8 @@ import java.util.List;
 
 public class PeerTable {
 	private static HashMap<String,PeerRecord> table = new HashMap<String,PeerRecord>() ;
+	
+	private BlockingListQueue queue;
 
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);

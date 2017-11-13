@@ -8,6 +8,7 @@ public class PeerRecord {
 	private int peerSeqNum;
 	double expirationTime;
 	private PeerState peerState;
+	double synTime;
 
 	public PeerRecord(String peerID,InetAddress peerIPAddress, int peerSeqNum, int HelloInterval, PeerState peerState){
 		this.peerID=peerID;
@@ -31,5 +32,9 @@ public class PeerRecord {
 	
 	public String getPeerId() {
 		return peerID;
+	}
+	
+	public void setSynTime(){
+		this.synTime=System.currentTimeMillis();
 	}
 }
