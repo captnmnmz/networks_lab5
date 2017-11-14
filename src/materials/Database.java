@@ -14,9 +14,9 @@ public class Database {
 	
 	private String tempData="theData";
 	
-	public Database(String myPeerID, InetAddress myAddress, int myHelloInterval) {
+	public Database(String myPeerID, int seqNum) {
 		this.owner = myPeerID;
-		this.seqNum = -1;
+		this.seqNum = seqNum;
 	}
 	
 	

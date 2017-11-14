@@ -54,9 +54,16 @@ public class PeerTable {
 		}
 		if (peer.getPeerState()==PeerState.SYNCHRONIZED && peer.getPeerSeqNum()==seqNumber){
 			peer.setPeerState(PeerState.SYNCHRONIZED);
+			peer.setExpirationTime();
+			
 		}
 	}
 	
+	public static synchronized PeerRecord getPeer(String peerID){
+		return table.get(peerID);
+	}
+	
+
 
 
 	public static synchronized List<String> sendPeersID(){

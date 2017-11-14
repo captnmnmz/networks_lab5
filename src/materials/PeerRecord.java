@@ -7,6 +7,7 @@ public class PeerRecord {
 	InetAddress peerIPAddress;
 	private int peerSeqNum;
 	double expirationTime;
+	int helloInterval;
 	private PeerState peerState;
 	public double synTime;
 
@@ -15,6 +16,7 @@ public class PeerRecord {
 		this.peerIPAddress=peerIPAddress;
 		this.peerSeqNum=peerSeqNum;
 		this.expirationTime=HelloInterval*1000+System.currentTimeMillis();
+		this.helloInterval=HelloInterval;
 		this.setPeerState(peerState);
 	}
 
@@ -36,6 +38,18 @@ public class PeerRecord {
 	
 	public void setSynTime(){
 		this.synTime=System.currentTimeMillis();
+	}
+	
+	public void setExpirationTime(){
+		this.expirationTime=System.currentTimeMillis();
+	}
+	
+	public int getHelloInterval(){
+		return this.helloInterval;
+	}
+	
+	public InetAddress getAddress(){
+		return this.peerIPAddress;
 	}
 	
 

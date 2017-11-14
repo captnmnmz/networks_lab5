@@ -3,13 +3,18 @@ package ListMessage;
 import materials.SimpleMessageHandler;
 import materials.SynchronizedQueue;
 import materials.MuxDemuxSimple;
+import materials.PeerRecord;
+import materials.PeerTable;
+
+import java.net.InetAddress;
+
 import materials.Database;
 
 public class ListReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	private String received_data = "";
-	private int TotalParts=0;
+
+
 	
 	@Override
 	public void run() {
@@ -18,33 +23,45 @@ public class ListReceiver implements SimpleMessageHandler {
 				String received = incoming.dequeue();
 				ListMessage lm = new ListMessage(received);
 				//ListMessage is for me
+				//TODO 
 				if(lm.getPeerId().equals(myMuxDemux.getID())) {
 					//TODO More difficult cases : PeerState = synchronised process ??
-					
-					//New sequence of ListMessage
-					if(TotalParts == 0) {
-						TotalParts = lm.getTotalParts();
-					}
-					String senderID = lm.getSenderId();
-					received_data += lm.getData();
-					
-					if (TotalParts == lm.getPartNumber()) {
-						//ListMessages have been successfully received, notify to SynSender
-						synchronized (myMuxDemux.getMonitor()) {
-							myMuxDemux.getMonitor().notify();
+					Runnable listReceiver = new Runnable(){
+						@Override
+						public void run(){
+							int totalParts=lm.getTotalParts();
+							String senderID = lm.getSenderId();
+							String received_data ="";
+							for (int i=0; i<totalParts; i++){
+								received_data+=lm.getData();
+							}
+							//Update the PeerTable by putting a new entry 
+							PeerRecord peer = PeerTable.getPeer(senderID);
+							int HelloInterval = peer.getHelloInterval();
+							InetAddress peerIPAddress = peer.getAddress();
+							PeerTable.addPeer(senderID, peerIPAddress, HelloInterval);
+							
+							//Update the table of peer databases, or create a new entry if non existent
+							if(myMuxDemux.getPeerDatabase().containsKey(senderID)){
+								Database temp = myMuxDemux.getPeerDatabase().get(senderID);
+								temp.setData(received_data);
+							}else{
+								Database temp = new Database(senderID, lm.getSequenceNumber());
+								temp.setData(received_data);
+								myMuxDemux.getPeerDatabase().put(senderID, temp);
+							}
+							
+							synchronized (myMuxDemux.getMonitor()) {
+								myMuxDemux.getMonitor().notify();
+							}
+
+							
 						}
-						//Update peerState
-						//TODO Update the peerState, expirationTime, etc., in the PeerTable (from previous TD) as appropriate
-						
-						//Update data in Database
-						Database temp = myMuxDemux.getPeerDatabase().get(senderID);
-						temp.setData(received_data);
-						myMuxDemux.getPeerDatabase().put(senderID, temp);
-						
-						//Reinitialisation
-						received_data="";
-						TotalParts = 0;
-					}
+					};
+					
+					Thread receiverThread = new Thread(listReceiver);
+					receiverThread.start();
+					
 				}
 
 			}catch(IllegalArgumentException e) {
