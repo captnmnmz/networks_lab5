@@ -62,7 +62,7 @@ public class SynReceiver implements SimpleMessageHandler {
 							public void run(){
 								String data = myMuxDemux.getDatabase().getData();
 								//TODO check that this is really the number of parts
-								int TotalParts = data.length()/255;
+								int TotalParts = data.length()/255 +1;
 								//Split data into String containing maximum 255 characters
 								for (int i=0; i<TotalParts; i++) {
 									String _data = data.substring(0, 255);
