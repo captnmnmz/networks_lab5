@@ -23,6 +23,13 @@ public class PeerTable {
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
 		table.put(peerID, peer);
 	}
+	
+	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval, int seqNum){
+		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, seqNum, HelloInterval, PeerState.HEARD);
+		table.put(peerID, peer);
+	}
+	
+	
 
 
 

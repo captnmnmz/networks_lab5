@@ -39,7 +39,8 @@ public class ListReceiver implements SimpleMessageHandler {
 							PeerRecord peer = PeerTable.getPeer(senderID);
 							int HelloInterval = peer.getHelloInterval();
 							InetAddress peerIPAddress = peer.getAddress();
-							PeerTable.addPeer(senderID, peerIPAddress, HelloInterval);
+							
+							PeerTable.addPeer(senderID, peerIPAddress, HelloInterval, lm.getSequenceNumber());
 							
 							//Update the table of peer databases, or create a new entry if non existent
 							if(myMuxDemux.getPeerDatabase().containsKey(senderID)){
