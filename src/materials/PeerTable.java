@@ -50,7 +50,7 @@ public class PeerTable {
 	public static synchronized void updatePeer(String peerID, int seqNumber){
 		PeerRecord peer = table.get(peerID);
 		if (peer.getPeerSeqNum()!=seqNumber){
-			if (peer.getPeerState()==PeerState.SYNCHRONIZED){
+			if (peer.getPeerState()==PeerState.SYNCHRONIZED || peer.getPeerState()==PeerState.HEARD ){
 				queue.enqueue(peer);
 			}
 			peer.setPeerState(PeerState.INCONSISTENT);
