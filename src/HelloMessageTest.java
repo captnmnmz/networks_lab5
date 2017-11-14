@@ -1,5 +1,9 @@
-package HelloMessage;
+
 import java.net.DatagramSocket;
+
+import HelloMessage.DebugReceiver;
+import HelloMessage.HelloReceiver;
+import HelloMessage.HelloSender;
 import materials.MuxDemuxSimple;
 import materials.SimpleMessageHandler;
 
@@ -14,10 +18,10 @@ public class HelloMessageTest {
 			handlers[1]= new HelloSender();
 			handlers[2]= new DebugReceiver();
 			MuxDemuxSimple dm = new MuxDemuxSimple(handlers, mySocket,"Oliver", 254);
+			new Thread(dm).start();
 			new Thread(handlers[0]).start();
 			new Thread(handlers[1]).start();
 			new Thread(handlers[2]).start();
-			new Thread(dm).start();
 	    }catch(Exception e ) {
 	    		System.err.println(e.getMessage());
 	    }

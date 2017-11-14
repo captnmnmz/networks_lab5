@@ -30,6 +30,7 @@ public class MuxDemuxSimple implements Runnable {
 		myS= s;
 		myMessageHandlers = h;
 		this.HelloInterval=HelloInterval;
+		this.peerID = peerID;
 		try{
 			my_db=new Database(peerID, InetAddress.getByName(ADDRESS), HelloInterval);
 		}catch(UnknownHostException e){
