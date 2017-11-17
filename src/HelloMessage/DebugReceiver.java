@@ -4,7 +4,7 @@ import materials.SimpleMessageHandler;
 import materials.SynchronizedQueue;
 
 public class DebugReceiver implements SimpleMessageHandler {
-	private MuxDemuxSimple myMuxDemux= null;
+	private MuxDemuxSimple myMuxDemux;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	
 	@Override

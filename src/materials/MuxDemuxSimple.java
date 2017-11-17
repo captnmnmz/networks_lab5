@@ -29,10 +29,16 @@ public class MuxDemuxSimple implements Runnable {
 	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s, String peerID, int HelloInterval) {
 		myS= s;
 		myMessageHandlers = h;
+		for (int i=0; i< myMessageHandlers.length ; i++) {
+			myMessageHandlers[i].setMuxDemux(this);
+		}
 		this.HelloInterval=HelloInterval;
 		this.peerID = peerID;
 		my_db=new Database(peerID, -1);
+		my_db.add("data_1");
+		my_db.add("data_2");
 		peers_db=new HashMap<String,Database>();
+
 	}
 	
 	public void run() {

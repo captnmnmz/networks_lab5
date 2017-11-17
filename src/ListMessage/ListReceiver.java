@@ -31,10 +31,16 @@ public class ListReceiver implements SimpleMessageHandler {
 						public void run(){
 							int totalParts=lm.getTotalParts();
 							String senderID = lm.getSenderId();
-							String received_data ="";
-							for (int i=0; i<totalParts; i++){
-								received_data+=lm.getData();
+							if(myMuxDemux.getPeerDatabase().containsKey(senderID) || !senderID.equals(myMuxDemux.getID())){
+								Database updated = new Database(senderID, lm.getSequenceNumber());
+								for (int i=0; i<totalParts; i++){
+									updated.add(lm.getData());
+								}
+								myMuxDemux.getPeerDatabase().put(senderID, updated);
+								
+
 							}
+
 							//Update the PeerTable by putting a new entry 
 							PeerRecord peer = PeerTable.getPeer(senderID);
 							int HelloInterval = peer.getHelloInterval();
@@ -42,19 +48,9 @@ public class ListReceiver implements SimpleMessageHandler {
 							
 							PeerTable.addPeer(senderID, peerIPAddress, HelloInterval, lm.getSequenceNumber());
 							
-							//Update the table of peer databases, or create a new entry if non existent
-							if(myMuxDemux.getPeerDatabase().containsKey(senderID)){
-								Database temp = myMuxDemux.getPeerDatabase().get(senderID);
-								temp.setData(received_data);
-							}else{
-								Database temp = new Database(senderID, lm.getSequenceNumber());
-								temp.setData(received_data);
-								myMuxDemux.getPeerDatabase().put(senderID, temp);
-							}
+							PeerTable.cancelTask(senderID);
+
 							
-							synchronized (myMuxDemux.getMonitor()) {
-								myMuxDemux.getMonitor().notify();
-							}
 
 							
 						}

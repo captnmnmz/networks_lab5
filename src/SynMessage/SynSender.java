@@ -14,9 +14,9 @@ import java.util.Timer;
 public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	private String SENDER = "Chevallier";
+	private String SENDER = "Oliver";
 	//TODO change syninterval
-	private int SYNINTERVAL = 150;
+	private int SYNINTERVAL = 2000;
 	private Timer TIMER = new Timer("SynTimer", true);
 	
 	@Override
@@ -28,24 +28,17 @@ public class SynSender implements SimpleMessageHandler {
 				@Override
 				public void run() {
 					//TODO change while to condition where it stops when LIST message received
-					while(true){
-						if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
-							myMuxDemux.send(message.getSynMessageAsEncodedString());
-						}
+					
+					if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
+						myMuxDemux.send(message.getSynMessageAsEncodedString());
 					}
+					
 
 				}
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
-			//Wait for receiving ListMessage 
-			synchronized(myMuxDemux.getMonitor()) {
-				try {
-					myMuxDemux.getMonitor().wait();
-				} catch (InterruptedException e) {
-					System.err.println(e.getMessage());;
-				}
-			}
-			task.cancel();
+			PeerTable.addTask(peer.getPeerId(), task);
+
 			
 		}
 	}
