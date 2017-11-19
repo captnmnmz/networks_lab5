@@ -48,7 +48,7 @@ public class PeerTable {
 	}
 	
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval, int seqNum){
-		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, seqNum, HelloInterval, PeerState.HEARD);
+		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, seqNum, HelloInterval, PeerState.SYNCHRONIZED);
 		table.put(peerID, peer);
 	}
 	
@@ -73,10 +73,10 @@ public class PeerTable {
 	public static synchronized void updatePeer(String peerID, int seqNumber){
 		PeerRecord peer = table.get(peerID);
 		if (peer.getPeerSeqNum()!=seqNumber){
-			if (peer.getPeerState()==PeerState.SYNCHRONIZED){
-				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
-				queue.enqueue(synPeer);
-			}
+
+			PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
+			queue.enqueue(synPeer);
+
 			peer.setPeerState(PeerState.INCONSISTENT);
 			
 		}
