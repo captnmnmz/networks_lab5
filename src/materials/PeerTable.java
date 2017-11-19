@@ -72,11 +72,16 @@ public class PeerTable {
 	
 	public static synchronized void updatePeer(String peerID, int seqNumber){
 		PeerRecord peer = table.get(peerID);
-		if (peer.getPeerSeqNum()!=seqNumber){
-
+		if (peer.getPeerState()==PeerState.HEARD){
 			PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
-			queue.enqueue(synPeer);
-
+			queue.enqueue(peer);
+			return;
+		}
+		if (peer.getPeerSeqNum()!=seqNumber){
+			if (peer.getPeerState()==PeerState.SYNCHRONIZED){
+				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
+				queue.enqueue(synPeer);
+			}
 			peer.setPeerState(PeerState.INCONSISTENT);
 			
 		}
