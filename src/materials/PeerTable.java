@@ -2,12 +2,36 @@ package materials;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.TimerTask;
 import java.util.List;
+
+class TimerMap{
+	HashMap<String, TimerTask> map = new HashMap<String, TimerTask>();
+	
+	public synchronized boolean contains(String id){
+		return map.containsKey(id);
+	}
+	
+	public synchronized void put(String id, TimerTask task){
+		map.put(id, task);
+	}
+	
+	public synchronized void remove(String id){
+		map.remove(id);
+	}
+	
+	public synchronized TimerTask get(String id){
+		return map.get(id);
+	}
+}
 
 public class PeerTable {
 	private static HashMap<String,PeerRecord> table = new HashMap<String,PeerRecord>() ;
 	
 	public static BlockingListQueue queue = new BlockingListQueue();
+	
+	private static TimerMap timerMap = new TimerMap();
 
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
@@ -38,7 +62,8 @@ public class PeerTable {
 		PeerRecord peer = table.get(peerID);
 		if (peer.getPeerSeqNum()!=seqNumber){
 			if (peer.getPeerState()==PeerState.SYNCHRONIZED || peer.getPeerState()==PeerState.HEARD ){
-				queue.enqueue(peer);
+				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
+				queue.enqueue(synPeer);
 			}
 			peer.setPeerState(PeerState.INCONSISTENT);
 			
@@ -107,6 +132,18 @@ public class PeerTable {
 				table.remove(_id);
 			}
 		}
+	}
+	
+	public static synchronized void addTask(String id, TimerTask task){
+		timerMap.put(id, task);
+	}
+	
+	public static synchronized void cancelTask(String id){
+		if(timerMap.contains(id)){
+			timerMap.get(id).cancel();
+			timerMap.remove(id);
+		}
+
 	}
 	
 

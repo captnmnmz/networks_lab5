@@ -1,6 +1,7 @@
 package SynMessage;
 
 import java.util.HashSet;
+import java.util.ArrayList;
 import materials.SimpleMessageHandler;
 import materials.SynchronizedQueue;
 import materials.MuxDemuxSimple;
@@ -60,14 +61,14 @@ public class SynReceiver implements SimpleMessageHandler {
 						Runnable listSender = new Runnable(){
 							@Override
 							public void run(){
-								String data = myMuxDemux.getDatabase().getData();
+								ArrayList<String> data = myMuxDemux.getDatabase().getData();
 								//TODO check that this is really the number of parts
-								int TotalParts = data.length()/255 +1;
+								int TotalParts=data.size();
+
 								//Split data into String containing maximum 255 characters
 								for (int i=0; i<TotalParts; i++) {
-									String _data = data.substring(0, 255);
-									ListMessage lm = new ListMessage(myMuxDemux.getID(), sm.getSequenceNumber(), sm.getSenderId(), TotalParts, i+1, _data);
-									data = data.substring(255);
+									String _data = data.get(i);
+									ListMessage lm = new ListMessage(myMuxDemux.getID(), sm.getSequenceNumber(), sm.getSenderId(), TotalParts, i, _data);
 									//Send a LIST message containing a part of the data
 									myMuxDemux.send(lm.getListMessageAsEncodedString());
 								}

@@ -16,17 +16,20 @@ public class HelloReceiver implements SimpleMessageHandler {
 			try {
 				String received = incoming.dequeue();
 				HelloMessage hm = new HelloMessage(received);
-				if (!PeerTable.containsPeer(hm.getSenderId())) {
-					PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
+				if (!hm.getSenderId().equals(myMuxDemux.getID())){
+					if (!PeerTable.containsPeer(hm.getSenderId())) {
+						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
+					}
+					//Update peer in any case
+					PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber());
+					String message = hm.toString();
+					//Print the content on the screen
+					//System.out.println("Received : " +message);
 				}
-				//Update peer in any case
-				PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber());
-				String message = hm.toString();
-				//Print the content on the screen
-				System.out.println("Received : " +message);
+
 				
 			}catch(IllegalArgumentException e) {
-				if(e.getMessage().equals("The message must begin by HELLO \n\r "
+				if(e.getMessage().equals("The message must begin by HELLO \n\r"
 						+"The string is supposed to be formatted as : HELLO;senderID;sequence#;HelloInterval;NumPeers;peer1;peer2;….;peerN")) {
 						//Do nothing : the message wasn't a HelloMessage
 				}else {

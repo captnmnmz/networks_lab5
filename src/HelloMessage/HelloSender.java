@@ -27,7 +27,7 @@ class RandomAlphanumeric {
 
 public class HelloSender implements SimpleMessageHandler {
 
-	private MuxDemuxSimple myMuxDemux=null;
+	private MuxDemuxSimple myMuxDemux;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	private Timer TIMER = new Timer("SendingTimer", true);
 
@@ -39,7 +39,7 @@ public class HelloSender implements SimpleMessageHandler {
 			//Generate a random HelloInterval < 256
 			//int HelloInterval = new Random().nextInt(256);
 			int HelloInterval = myMuxDemux.getHelloInterval();
-			HelloMessage m = new HelloMessage(senderID,-1,HelloInterval);
+			HelloMessage m = new HelloMessage(senderID,myMuxDemux.getDatabase().getDatabaseSequenceNumber(),HelloInterval);
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
@@ -53,8 +53,8 @@ public class HelloSender implements SimpleMessageHandler {
 				}
 			};
 			//We send Hello message before reaching the maximum time
-			int delay = new Random().nextInt(HelloInterval);
-			TIMER.schedule(task,0,250);
+			int delay = 2000;
+			TIMER.schedule(task,0,delay);
 		}catch(IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}

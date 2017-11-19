@@ -1,6 +1,12 @@
 package materials;
 
+
 import java.util.HashMap;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Database {
 
@@ -8,9 +14,9 @@ public class Database {
 
 	private  String owner;
 
-	private  HashMap<String,Integer> db = new HashMap<String,Integer>();
+	private  ArrayList<String> db = new ArrayList<String>();
 	
-	private String tempData="theData";
+	
 	
 	public Database(String myPeerID, int seqNum) {
 		this.owner = myPeerID;
@@ -20,16 +26,18 @@ public class Database {
 	
 	
 	//this is called only in the case of our local database
-	public synchronized void updateDB(){
+	public synchronized void updateDB(ArrayList<String> new_db){
+		this.db=new_db;
 		this.seqNum++;
 	}
 	
-	public synchronized String getData(){
-		return tempData;
+	public synchronized void add(String entry){
+		this.db.add(entry);
+		this.seqNum++;
 	}
 	
-	public synchronized void setData(String data) {
-		this.tempData = data;
+	public synchronized ArrayList<String> getData(){
+		return db;
 	}
 	
 
