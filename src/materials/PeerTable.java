@@ -2,7 +2,6 @@ package materials;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.TimerTask;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class PeerTable {
 		PeerRecord peer = table.get(peerID);
 		if (peer.getPeerState()==PeerState.HEARD){
 			PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
-			queue.enqueue(peer);
+			queue.enqueue(synPeer);
 			return;
 		}
 		if (peer.getPeerSeqNum()!=seqNumber){
@@ -116,9 +115,7 @@ public class PeerTable {
 			for (String id : table.keySet()){
 
 				db.put(id, table.get(id).getPeerSeqNum());
-
 			}
-			
 		}
 		return db;
 	}
@@ -144,6 +141,7 @@ public class PeerTable {
 	}
 	
 	public static synchronized void cancelTask(String id){
+		System.out.println("Try to cancel task : " + id);
 		if(timerMap.contains(id)){
 			timerMap.get(id).cancel();
 			System.out.println("Task : " + id + " cancelled");

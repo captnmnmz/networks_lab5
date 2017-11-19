@@ -10,11 +10,11 @@ public class ListMessage {
 	private String data;
 
 	/**
-	 * This method populates the attributes of the HelloMessage object.
+	 * This method populates the attributes of the ListMessage object.
 	 * 
 	 * @param s
 	 * 			String formatted as "LIST;senderID;peerID;sequence#;TotalParts;part#;data;"
-	 *
+	 * @throws IllegalArgumentException
 	 */
 
 	public ListMessage(String s) throws IllegalArgumentException {
@@ -83,13 +83,19 @@ public class ListMessage {
 	 * This method populates the attributes of the ListMessage object.
 	 * 
 	 * @param senderID
+	 * 		Must be a string of up to 16 characters and must contain only characters A-Z a-z and 0-9
 	 * @param sequenceNo
 	 * @param peerID
+	 * 		Must be a string of up to 16 characters and must contain only characters A-Z a-z and 0-9
 	 * @param totalpart
 	 * @param part_Number
+	 * 		Must be lower than totalpart. Part_Number begins to 0.
 	 * @param data
+	 * 		Data to send with the ListMessage
+	 * 
+	 * @throws IllegalArgumentException
 	 */
-	public ListMessage(String senderID, int sequenceNo, String peerID, int totalpart,int part_Number, String data)  {
+	public ListMessage(String senderID, int sequenceNo, String peerID, int totalpart,int part_Number, String data) throws IllegalArgumentException {
 		//Verify that senderID contains only characters A-Z a-z and 0-9 
 		if (!senderID.matches("[^\\w\\d\\;]")) {
 
@@ -136,9 +142,9 @@ public class ListMessage {
 	}
 
 	/**
-	 * This method returns the attributes of the HelloMessage object as a formatted string.
+	 * This method returns the attributes of the ListMessage object as a formatted string.
 	 * 
-	 * @return Return a string formatted like this : "HELLO;senderID;sequence#;HelloInterval;NumPeers;peer1;peer2;….;peerN" 
+	 * @return Return a string formatted like this : "LIST;senderID;peerID;sequence#;TotalParts;part#;data;" 
 	 *
 	 */
 	public String getListMessageAsEncodedString() {
@@ -146,11 +152,11 @@ public class ListMessage {
 	}
 
 	/**
-	 * This method adds a peer to the list if this one is not full. If the list is full (256 elements), display an error message
-	 *
+	 * This method returns the attributes of the ListMessage object as a readable message.
+	 * 
+	 * @return Return a message which presents the attributes of the ListMessage
 	 */
-
-
+	
 	public String toString() {
 		String message = "Details of the ListMessage : \n\r";
 		message += "SenderID : " + senderID +"\n\r";

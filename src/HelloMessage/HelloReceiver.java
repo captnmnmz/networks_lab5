@@ -18,6 +18,7 @@ public class HelloReceiver implements SimpleMessageHandler {
 				HelloMessage hm = new HelloMessage(received);
 				if (!hm.getSenderId().equals(myMuxDemux.getID())){
 					if (!PeerTable.containsPeer(hm.getSenderId())) {
+						System.out.println("Doesn't know peer");
 						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
 					}
 					//Update peer in any case
@@ -41,7 +42,14 @@ public class HelloReceiver implements SimpleMessageHandler {
 			}
 		}
 	}
-
+	
+	/**
+	 * 
+	 * This method aims to handle all the received messages
+	 * 
+	 * @param m
+	 * 		This is the message received which is enqueued in incoming
+	 */
 	public void handleMessage(String m) {
 		try {
 			incoming.enqueue(m);
@@ -49,7 +57,14 @@ public class HelloReceiver implements SimpleMessageHandler {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	
+	/**
+	 * 
+	 * This method aims to set the MuxDemuxSimple object of the class
+	 * 
+	 * @param md
+	 * 		A MuxDemuxSimple Object
+	 */
 	public void setMuxDemux(MuxDemuxSimple md) {
 		myMuxDemux = md;
 	}

@@ -60,6 +60,14 @@ public class HelloSender implements SimpleMessageHandler {
 		}
 
 	}
+	
+	/**
+	 * 
+	 * This method aims to handle all the received messages
+	 * 
+	 * @param m
+	 * 		This is the message received which is enqueued in incoming
+	 */
 	@Override
 	public void handleMessage(String m) {
 		try {
@@ -68,7 +76,14 @@ public class HelloSender implements SimpleMessageHandler {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	
+	/**
+	 * 
+	 * This method aims to set the MuxDemuxSimple object of the class
+	 * 
+	 * @param md
+	 * 		A MuxDemuxSimple Object
+	 */
 	@Override
 	public void setMuxDemux(MuxDemuxSimple md) {
 		myMuxDemux = md;
