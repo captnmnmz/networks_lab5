@@ -16,8 +16,6 @@ public class Database {
 
 	private  ArrayList<String> db = new ArrayList<String>();
 	
-	
-	
 	public Database(String myPeerID, int seqNum) {
 		this.owner = myPeerID;
 		this.seqNum = seqNum;

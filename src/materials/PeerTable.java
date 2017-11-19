@@ -141,6 +141,7 @@ public class PeerTable {
 	public static synchronized void cancelTask(String id){
 		if(timerMap.contains(id)){
 			timerMap.get(id).cancel();
+			System.out.println("Task : " + id + " cancelled");
 			timerMap.remove(id);
 		}
 

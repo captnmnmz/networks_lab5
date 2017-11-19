@@ -14,7 +14,6 @@ import java.util.Timer;
 public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	private String SENDER = "Oliver";
 	//TODO change syninterval
 	private int SYNINTERVAL = 2000;
 	private Timer TIMER = new Timer("SynTimer", true);
@@ -23,7 +22,7 @@ public class SynSender implements SimpleMessageHandler {
 	public void run() {
 		while(true){
 			PeerRecord peer = PeerTable.queue.dequeue();
-			SynMessage message = new SynMessage(SENDER,peer.getPeerSeqNum(),peer.getPeerId());
+			SynMessage message = new SynMessage(myMuxDemux.getID(),peer.getPeerSeqNum(),peer.getPeerId());
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
@@ -38,8 +37,7 @@ public class SynSender implements SimpleMessageHandler {
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
 			PeerTable.addTask(peer.getPeerId(), task);
-
-			
+			System.out.println("Task : " + peer.getPeerId() + " added");			
 		}
 	}
 	

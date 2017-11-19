@@ -37,8 +37,7 @@ public class ListReceiver implements SimpleMessageHandler {
 									updated.add(lm.getData());
 								}
 								myMuxDemux.getPeerDatabase().put(senderID, updated);
-								
-
+							
 							}
 
 							//Update the PeerTable by putting a new entry 
