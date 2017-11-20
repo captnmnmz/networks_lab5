@@ -5,16 +5,19 @@ import materials.SynchronizedQueue;
 import materials.MuxDemuxSimple;
 import materials.PeerRecord;
 import materials.PeerTable;
-
 import java.net.InetAddress;
-
 import materials.Database;
+
+/**
+ * ListReceiver is the class that will handle ListMessage and update the data associated to a peer in the Peer Table
+ * 
+ * @author Bastien Chevallier & Jules Yates
+ *
+ */
 
 public class ListReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-
-
 	
 	@Override
 	public void run() {
@@ -22,23 +25,21 @@ public class ListReceiver implements SimpleMessageHandler {
 			try {
 				String received = incoming.dequeue();
 				ListMessage lm = new ListMessage(received);
-				//ListMessage is for me
-				//TODO 
+				//Is ListMessage for me ?
 				if(lm.getPeerId().equals(myMuxDemux.getID())) {
-					//TODO More difficult cases : PeerState = synchronised process ??
+
 					Runnable listReceiver = new Runnable(){
 						@Override
 						public void run(){
 							int totalParts=lm.getTotalParts();
 							String senderID = lm.getSenderId();
+							//Is the SenderID already in our Peer list ? & I'm not the sender of the ListMessage
 							if(myMuxDemux.getPeerDatabase().containsKey(senderID) || !senderID.equals(myMuxDemux.getID())){
 								Database updated = new Database(senderID, lm.getSequenceNumber());
 								for (int i=0; i<totalParts; i++){
 									updated.add(lm.getData());
 								}
 								myMuxDemux.getPeerDatabase().put(senderID, updated);
-								
-
 							}
 
 							//Update the PeerTable by putting a new entry 
@@ -46,13 +47,12 @@ public class ListReceiver implements SimpleMessageHandler {
 							int HelloInterval = peer.getHelloInterval();
 							InetAddress peerIPAddress = peer.getAddress();
 							
+							//Update peer : PeerState changed to SYNCHRONIZED
 							PeerTable.addPeer(senderID, peerIPAddress, HelloInterval, lm.getSequenceNumber());
 							
+							//ListMessage received completely
+							//Cancel the TimerTask running in SynSender
 							PeerTable.cancelTask(senderID);
-
-							
-
-							
 						}
 					};
 					
@@ -73,14 +73,32 @@ public class ListReceiver implements SimpleMessageHandler {
 		}
 	}
 
+	/**
+	 * 
+	 * This method aims to handle all the received messages
+	 * 
+	 * @param m
+	 * 		This is the message received which is enqueued in incoming
+	 */
 	@Override
 	public void handleMessage(String m) {
-		
+		try {
+			incoming.enqueue(m);
+		}catch(Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
+	/**
+	 * 
+	 * This method aims to set the MuxDemuxSimple object of the class
+	 * 
+	 * @param md
+	 * 		A MuxDemuxSimple Object
+	 */
 	@Override
 	public void setMuxDemux(MuxDemuxSimple md) {
-		
+		myMuxDemux = md;
 	}
 
 }

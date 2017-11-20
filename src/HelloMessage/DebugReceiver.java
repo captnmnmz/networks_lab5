@@ -32,7 +32,14 @@ public class DebugReceiver implements SimpleMessageHandler {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	
+	/**
+	 * 
+	 * This method aims to set the MuxDemuxSimple object of the class
+	 * 
+	 * @param md
+	 * 		A MuxDemuxSimple Object
+	 */
 	@Override
 	public void setMuxDemux(MuxDemuxSimple md) {
 		myMuxDemux = md;

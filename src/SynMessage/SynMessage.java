@@ -9,7 +9,7 @@ public class SynMessage {
 
 
 	/**
-	 * This method populates the attributes of the HelloMessage object.
+	 * This method populates the attributes of the SynMessage object.
 	 * 
 	 * @param s
 	 * 		String formatted as "SYN;senderID;peerID;sequence#;"
@@ -76,6 +76,7 @@ public class SynMessage {
 	 * 			Must be a string of up to 16 characters and must contain only characters A-Z a-z and 0-9
 	 * @throws IllegalArgumentException
 	 */
+	
 	public SynMessage(String senderID, int sequenceNo, String peerID) throws IllegalArgumentException {
 		//Verify that senderID contains only characters A-Z a-z and 0-9 
 		if (!senderID.matches("[^\\w\\d\\;]")) {
@@ -121,7 +122,11 @@ public class SynMessage {
 
 	}
 
-
+	/**
+	 * This method returns the attributes of the SynMessage object as a readable message.
+	 * 
+	 * @return Return a message which presents the attributes of the SynMessage
+	 */
 	public String toString() {
 		String message = "Details of the SynMessage : \n\r";
 		message += "SenderID : " + senderID +"\n\r";

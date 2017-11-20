@@ -9,12 +9,16 @@ import materials.PeerTable;
 import java.util.TimerTask;
 import java.util.Timer;
 
-
+/**
+ * SynSender is a thread that send SynMessage to a peer in order to synchronize
+ * 
+ * @author Bastien Chevallier & Jules Yates
+ *
+ */
 
 public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	private String SENDER = "Oliver";
 	//TODO change syninterval
 	private int SYNINTERVAL = 2000;
 	private Timer TIMER = new Timer("SynTimer", true);
@@ -23,7 +27,7 @@ public class SynSender implements SimpleMessageHandler {
 	public void run() {
 		while(true){
 			PeerRecord peer = PeerTable.queue.dequeue();
-			SynMessage message = new SynMessage(SENDER,peer.getPeerSeqNum(),peer.getPeerId());
+			SynMessage message = new SynMessage(myMuxDemux.getID(),peer.getPeerSeqNum(),peer.getPeerId());
 			TimerTask task = new TimerTask() {
 				@Override
 				public void run() {
@@ -38,12 +42,17 @@ public class SynSender implements SimpleMessageHandler {
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
 			PeerTable.addTask(peer.getPeerId(), task);
-
-			
+			System.out.println("Task : SynMessage to " + peer.getPeerId() + " added");			
 		}
 	}
 	
-
+	/**
+	 * 
+	 * This method aims to handle all the received messages
+	 * 
+	 * @param m
+	 * 		This is the message received which is enqueued in incoming
+	 */
 	@Override
 	public void handleMessage(String m) {
 		try {
@@ -52,7 +61,15 @@ public class SynSender implements SimpleMessageHandler {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	
+	/**
+	 * 
+	 * This method aims to set the MuxDemuxSimple object of the class
+	 * 
+	 * @param md
+	 * 		A MuxDemuxSimple Object
+	 */
+	
 	@Override
 	public void setMuxDemux(MuxDemuxSimple md) {
 		myMuxDemux = md;

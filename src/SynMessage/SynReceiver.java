@@ -9,6 +9,7 @@ import ListMessage.ListMessage;
 
 /**
  * This class is a synchronized set that keeps tabs on which peers are been dealt by the SYN handler (or more precisely by its sub-threads)
+ * 
  * @author jules
  *
  */
@@ -54,7 +55,7 @@ public class SynReceiver implements SimpleMessageHandler {
 				//The message is for me and I'm not in the process of sending LIST messages to this peer
 				if (myMuxDemux.getID().equals(sm.getPeerId()) && !processing.contains(sm.getSenderId())) {
 					
-					// Verify if the sequenceNo refers to our current database
+					// Verify if the sequence number refers to our current database
 					if(sm.getSequenceNumber() == myMuxDemux.getDatabase().getDatabaseSequenceNumber()) {
 						processing.add(sm.getSenderId());
 						
@@ -64,8 +65,6 @@ public class SynReceiver implements SimpleMessageHandler {
 								ArrayList<String> data = myMuxDemux.getDatabase().getData();
 								//TODO check that this is really the number of parts
 								int TotalParts=data.size();
-
-								//Split data into String containing maximum 255 characters
 								for (int i=0; i<TotalParts; i++) {
 									String _data = data.get(i);
 									ListMessage lm = new ListMessage(myMuxDemux.getID(), sm.getSequenceNumber(), sm.getSenderId(), TotalParts, i, _data);
@@ -75,7 +74,6 @@ public class SynReceiver implements SimpleMessageHandler {
 								processing.remove(sm.getSenderId());
 							}
 						};
-						//According to the data's length, set TotalParts
 						
 						Thread senderThread = new Thread(listSender);
 						senderThread.start();
@@ -96,6 +94,14 @@ public class SynReceiver implements SimpleMessageHandler {
 			
 		
 	}
+	
+	/**
+	 * 
+	 * This method aims to handle all the received messages
+	 * 
+	 * @param m
+	 * 		This is the message received which is enqueued in incoming
+	 */
 
 	@Override
 	public void handleMessage(String m) {
@@ -105,7 +111,14 @@ public class SynReceiver implements SimpleMessageHandler {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	
+	/**
+	 * 
+	 * This method aims to set the MuxDemuxSimple object of the class
+	 * 
+	 * @param md
+	 * 		A MuxDemuxSimple Object
+	 */
 	@Override
 	public void setMuxDemux(MuxDemuxSimple md) {
 		myMuxDemux = md;		

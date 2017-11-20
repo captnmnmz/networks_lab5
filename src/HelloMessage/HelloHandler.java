@@ -12,6 +12,13 @@ public class HelloHandler implements SimpleMessageHandler, Runnable{
 	//TODO Which size for the SynchronizedQueue
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	
+	/**
+	 * 
+	 * This method aims to handle all the received messages
+	 * 
+	 * @param m
+	 * 		This is the message received which is enqueued in incoming
+	 */
 	public void handleMessage(String m) {
 		try {
 			incoming.enqueue(m);
@@ -19,6 +26,7 @@ public class HelloHandler implements SimpleMessageHandler, Runnable{
 			System.err.println(e.getMessage());
 		}
 	}
+	
 	
 	public void setMuxDemux(MuxDemuxSimple md) {
 		myMuxDemux = md;
