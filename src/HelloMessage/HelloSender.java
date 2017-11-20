@@ -37,8 +37,6 @@ public class HelloSender implements SimpleMessageHandler {
 			//Generate a random senderID
 			//String senderID = RandomAlphanumeric.generateRandomAlphanumeric(16);
 			String senderID = myMuxDemux.getID();
-			//Generate a random HelloInterval < 256
-			//int HelloInterval = new Random().nextInt(256);
 			int HelloInterval = myMuxDemux.getHelloInterval();
 			HelloMessage m = new HelloMessage(senderID,myMuxDemux.getDatabase().getDatabaseSequenceNumber(),HelloInterval);
 			TimerTask task = new TimerTask() {
