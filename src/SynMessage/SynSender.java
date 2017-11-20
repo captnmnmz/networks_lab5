@@ -25,6 +25,7 @@ public class SynSender implements SimpleMessageHandler {
 	
 	@Override
 	public void run() {
+		int count=0;
 		while(true){
 			PeerRecord peer = PeerTable.queue.dequeue();
 			SynMessage message = new SynMessage(myMuxDemux.getID(),peer.getPeerSeqNum(),peer.getPeerId());
@@ -34,6 +35,7 @@ public class SynSender implements SimpleMessageHandler {
 					//TODO change while to condition where it stops when LIST message received
 					if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
 						myMuxDemux.send(message.getSynMessageAsEncodedString());
+
 						peer.setSynTime();
 					}
 
@@ -43,7 +45,8 @@ public class SynSender implements SimpleMessageHandler {
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
 			PeerTable.addTask(peer.getPeerId(), task);
-			System.out.println("Task : SynMessage to " + peer.getPeerId().toString() + " added");			
+			System.out.println("Task : SynMessage to " + peer.getPeerId() + " added, number :"+count);	
+
 		}
 	}
 	
