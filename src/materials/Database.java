@@ -19,7 +19,7 @@ public class Database {
 
 	private  ArrayList<String> db = new ArrayList<String>();
 	
-	public Database(String myPeerID, int seqNum) {
+	public Database(int seqNum) {
 		this.seqNum = seqNum;
 	}
 
