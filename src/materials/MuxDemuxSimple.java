@@ -30,7 +30,7 @@ public class MuxDemuxSimple implements Runnable {
 		}
 		this.HelloInterval=HelloInterval;
 		this.peerID = peerID;
-		my_db=new Database(peerID, -1);
+		my_db=new Database(-1);
 		my_db.add("data_1");
 		my_db.add("data_2");
 		peers_db=new HashMap<String,Database>();

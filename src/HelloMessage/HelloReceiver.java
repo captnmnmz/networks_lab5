@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 
 import materials.MuxDemuxSimple;
 import materials.PeerTable;
+import materials.Database;
 import materials.SimpleMessageHandler;
 import materials.SynchronizedQueue;
 
@@ -20,6 +21,10 @@ public class HelloReceiver implements SimpleMessageHandler {
 					if (!PeerTable.containsPeer(hm.getSenderId())) {
 						System.out.println("Doesn't know peer");
 						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
+					}
+					if (!myMuxDemux.getPeerDatabase().containsKey(hm.getSenderId())){
+						Database peerDB = new Database(hm.getSequenceNumber());
+						myMuxDemux.getPeerDatabase().put(hm.getSenderId(), peerDB);
 					}
 					//Update peer in any case
 					int HelloInterval = hm.getHelloInterval();
