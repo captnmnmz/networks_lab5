@@ -74,7 +74,7 @@ public class PeerTable {
 		PeerRecord peer = table.get(peerID);
 		if (peer.getPeerState()==PeerState.HEARD){
 			PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
-			queue.enqueue(peer);
+			queue.enqueue(synPeer);
 			return;
 		}
 		if (peer.getPeerSeqNum()!=seqNumber){
