@@ -33,6 +33,10 @@ public class PeerRecord {
 		return peerSeqNum;
 	}
 	
+	public void setPeerSeqNum(int seqNum){
+		this.peerSeqNum=seqNum;
+	}
+	
 	public String getPeerId() {
 		return peerID;
 	}

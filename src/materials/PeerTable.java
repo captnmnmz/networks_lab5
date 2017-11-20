@@ -57,8 +57,9 @@ public class PeerTable {
 		return false;
 	}
 	
-	public static synchronized void sync(String peerID){
+	public static synchronized void sync(String peerID, int seqNum){
 		PeerRecord peer = table.get(peerID);
+		peer.setPeerSeqNum(seqNum);
 		peer.setPeerState(PeerState.SYNCHRONIZED);
 		peer.setExpirationTime(peer.getHelloInterval());
 	}
@@ -67,7 +68,6 @@ public class PeerTable {
 		PeerRecord peer = table.get(peerID);
 
 		if (peer.getPeerSeqNum()!=seqNumber){
-			System.out.println("NOT THE SAME SEQ NUM");
 			if (peer.getPeerState()==PeerState.SYNCHRONIZED || peer.getPeerState()==PeerState.HEARD){
 				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, HelloInterval, peer.getPeerState());
 				if(!timerMap.contains(peer.getPeerId())){
@@ -149,7 +149,6 @@ public class PeerTable {
 	
 	public static synchronized void cancelTask(String id){
 		if(timerMap.contains(id)){
-			System.out.println("Task : " + timerMap.get(id).toString() + " cancelled");
 			timerMap.get(id).cancel();
 			timerMap.remove(id);
 		}

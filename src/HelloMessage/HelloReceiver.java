@@ -20,11 +20,10 @@ public class HelloReceiver implements SimpleMessageHandler {
 				// Not my HelloMessage
 				if (!hm.getSenderId().equals(myMuxDemux.getID())){
 					if (!PeerTable.containsPeer(hm.getSenderId())) {
-						System.out.println("Doesn't know peer");
 						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
 					}
 					if (!myMuxDemux.getPeerDatabase().containsKey(hm.getSenderId())){
-						Database peerDB = new Database(hm.getSequenceNumber());
+						Database peerDB = new Database(-1);
 						myMuxDemux.getPeerDatabase().put(hm.getSenderId(), peerDB);
 					}
 					//Update peer in any case

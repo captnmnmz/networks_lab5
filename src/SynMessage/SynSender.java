@@ -25,7 +25,6 @@ public class SynSender implements SimpleMessageHandler {
 	
 	@Override
 	public void run() {
-		int count=0;
 		while(true){
 			PeerRecord peer = PeerTable.queue.dequeue();
 			SynMessage message = new SynMessage(myMuxDemux.getID(),peer.getPeerSeqNum(),peer.getPeerId());
@@ -43,10 +42,7 @@ public class SynSender implements SimpleMessageHandler {
 				}
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
-			PeerTable.addTask(peer.getPeerId(), task);
-
-			System.out.println("Task : SynMessage to " + peer.getPeerId() + " added, number :"+count);	
-			count++;
+			PeerTable.addTask(peer.getPeerId(), task);	
 
 		}
 	}

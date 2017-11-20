@@ -57,11 +57,12 @@ public class SynReceiver implements SimpleMessageHandler {
 					
 					// Verify if the sequence number refers to our current database
 					if(sm.getSequenceNumber() == myMuxDemux.getDatabase().getDatabaseSequenceNumber()) {
-						processing.add(sm.getSenderId());
+						
 						
 						Runnable listSender = new Runnable(){
 							@Override
 							public void run(){
+								processing.add(sm.getSenderId());
 								ArrayList<String> data = myMuxDemux.getDatabase().getData();
 								//TODO check that this is really the number of parts
 								int TotalParts=data.size();
