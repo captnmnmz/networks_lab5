@@ -57,23 +57,27 @@ public class PeerTable {
 		return false;
 	}
 	
+	public static synchronized void sync(String peerID){
+		PeerRecord peer = table.get(peerID);
+		peer.setPeerState(PeerState.SYNCHRONIZED);
+		peer.setExpirationTime();
+	}
+	
 	public static synchronized void updatePeer(String peerID, int seqNumber){
 		PeerRecord peer = table.get(peerID);
-		if (peer.getPeerState()==PeerState.HEARD){
-			PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
-			queue.enqueue(synPeer);
-			return;
-		}
+
 		if (peer.getPeerSeqNum()!=seqNumber){
-			if (peer.getPeerState()==PeerState.SYNCHRONIZED){
+			if (peer.getPeerState()==PeerState.SYNCHRONIZED || peer.getPeerState()==PeerState.HEARD){
 				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
 				queue.enqueue(synPeer);
 			}
 			peer.setPeerState(PeerState.INCONSISTENT);
+			peer.setExpirationTime();
 			
 		}
 		if (peer.getPeerState()==PeerState.INCONSISTENT){
 			peer.setPeerState(PeerState.INCONSISTENT);
+			peer.setExpirationTime();
 		}
 		if (peer.getPeerState()==PeerState.SYNCHRONIZED && peer.getPeerSeqNum()==seqNumber){
 			peer.setPeerState(PeerState.SYNCHRONIZED);
@@ -89,8 +93,8 @@ public class PeerTable {
 
 
 
-	public static synchronized List<String> sendPeersID(){
-		List<String> PeerList= new ArrayList<String>();
+	public static synchronized ArrayList<String> sendPeersID(){
+		ArrayList<String> PeerList= new ArrayList<String>();
 		if(table.size() == 0) {
 			return PeerList ;
 		}

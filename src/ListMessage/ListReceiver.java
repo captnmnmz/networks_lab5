@@ -34,25 +34,18 @@ public class ListReceiver implements SimpleMessageHandler {
 							int totalParts=lm.getTotalParts();
 							String senderID = lm.getSenderId();
 							//Is the SenderID already in our Peer list ? & I'm not the sender of the ListMessage
-							if(myMuxDemux.getPeerDatabase().containsKey(senderID) || !senderID.equals(myMuxDemux.getID())){
+							if(myMuxDemux.getPeerDatabase().containsKey(senderID) && !senderID.equals(myMuxDemux.getID())){
 								Database updated = new Database(senderID, lm.getSequenceNumber());
 								for (int i=0; i<totalParts; i++){
 									updated.add(lm.getData());
 								}
 								myMuxDemux.getPeerDatabase().put(senderID, updated);
+								PeerTable.sync(senderID);
+								
+								PeerTable.cancelTask(senderID);
 							}
 
-							//Update the PeerTable by putting a new entry 
-							PeerRecord peer = PeerTable.getPeer(senderID);
-							int HelloInterval = peer.getHelloInterval();
-							InetAddress peerIPAddress = peer.getAddress();
 							
-							//Update peer : PeerState changed to SYNCHRONIZED
-							PeerTable.addPeer(senderID, peerIPAddress, HelloInterval, lm.getSequenceNumber());
-							
-							//ListMessage received completely
-							//Cancel the TimerTask running in SynSender
-							PeerTable.cancelTask(senderID);
 						}
 					};
 					

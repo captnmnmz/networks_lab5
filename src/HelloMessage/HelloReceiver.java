@@ -23,7 +23,7 @@ public class HelloReceiver implements SimpleMessageHandler {
 					}
 					//Update peer in any case
 					PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber());
-					String message = hm.toString();
+					//String message = hm.toString();
 					//Print the content on the screen
 					//System.out.println("Received : " +message);
 				}

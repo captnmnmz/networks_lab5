@@ -20,7 +20,7 @@ public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	//TODO change syninterval
-	private int SYNINTERVAL = 2000;
+	private int SYNINTERVAL = 10000;
 	private Timer TIMER = new Timer("SynTimer", true);
 	
 	@Override
