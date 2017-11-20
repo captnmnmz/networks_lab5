@@ -18,6 +18,7 @@ public class PeerRecord {
 		this.expirationTime=HelloInterval*1000+System.currentTimeMillis();
 		this.helloInterval=HelloInterval;
 		this.setPeerState(peerState);
+		this.setSynTime();
 	}
 
 	public PeerState getPeerState() {
