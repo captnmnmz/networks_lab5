@@ -23,7 +23,7 @@ public class HelloReceiver implements SimpleMessageHandler {
 						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
 					}
 					if (!myMuxDemux.getPeerDatabase().containsKey(hm.getSenderId())){
-						Database peerDB = new Database(hm.getSequenceNumber());
+						Database peerDB = new Database(-1);
 						myMuxDemux.getPeerDatabase().put(hm.getSenderId(), peerDB);
 					}
 					//Update peer in any case

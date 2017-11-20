@@ -46,6 +46,7 @@ public class SynSender implements SimpleMessageHandler {
 			TIMER.schedule(task,0,SYNINTERVAL);
 			PeerTable.addTask(peer.getPeerId(), task);
 			System.out.println("Task : SynMessage to " + peer.getPeerId() + " added, number :"+count);	
+			count++;
 
 		}
 	}

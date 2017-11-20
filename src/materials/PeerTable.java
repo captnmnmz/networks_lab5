@@ -57,8 +57,9 @@ public class PeerTable {
 		return false;
 	}
 	
-	public static synchronized void sync(String peerID){
+	public static synchronized void sync(String peerID, int seqNum){
 		PeerRecord peer = table.get(peerID);
+		peer.setPeerSeqNum(seqNum);
 		peer.setPeerState(PeerState.SYNCHRONIZED);
 		peer.setExpirationTime(peer.getHelloInterval());
 	}
