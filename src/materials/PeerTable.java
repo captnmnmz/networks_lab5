@@ -69,7 +69,10 @@ public class PeerTable {
 		if (peer.getPeerSeqNum()!=seqNumber){
 			if (peer.getPeerState()==PeerState.SYNCHRONIZED || peer.getPeerState()==PeerState.HEARD){
 				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, HelloInterval, peer.getPeerState());
-				queue.enqueue(synPeer);
+				if(!timerMap.contains(peer.getPeerId())){
+					queue.enqueue(synPeer);
+				}
+
 			}
 			peer.setPeerState(PeerState.INCONSISTENT);
 			peer.setExpirationTime(HelloInterval);
@@ -146,8 +149,9 @@ public class PeerTable {
 	public static synchronized void cancelTask(String id){
 		System.out.println("Try to cancel task : " + id);
 		if(timerMap.contains(id)){
+			System.out.println("Task : " + timerMap.get(id).toString() + " cancelled");
 			timerMap.get(id).cancel();
-			System.out.println("Task : " + id + " cancelled");
+
 			timerMap.remove(id);
 		}
 

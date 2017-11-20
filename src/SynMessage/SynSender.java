@@ -32,7 +32,6 @@ public class SynSender implements SimpleMessageHandler {
 				@Override
 				public void run() {
 					//TODO change while to condition where it stops when LIST message received
-					System.out.println(this.toString());
 					if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
 						myMuxDemux.send(message.getSynMessageAsEncodedString());
 						peer.setSynTime();
@@ -44,7 +43,7 @@ public class SynSender implements SimpleMessageHandler {
 			};
 			TIMER.schedule(task,0,SYNINTERVAL);
 			PeerTable.addTask(peer.getPeerId(), task);
-			System.out.println("Task : SynMessage to " + peer.getPeerId() + " added");			
+			System.out.println("Task : SynMessage to " + peer.getPeerId().toString() + " added");			
 		}
 	}
 	
