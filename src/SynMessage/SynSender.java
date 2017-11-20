@@ -20,7 +20,7 @@ public class SynSender implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
 	//TODO change syninterval
-	private int SYNINTERVAL = 10000;
+	private int SYNINTERVAL = 4000;
 	private Timer TIMER = new Timer("SynTimer", true);
 	
 	@Override
@@ -33,9 +33,10 @@ public class SynSender implements SimpleMessageHandler {
 				public void run() {
 					//TODO change while to condition where it stops when LIST message received
 					
-					if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
+					/*if ((peer.synTime+SYNINTERVAL)<System.currentTimeMillis()){
 						myMuxDemux.send(message.getSynMessageAsEncodedString());
-					}
+					}*/
+					myMuxDemux.send(message.getSynMessageAsEncodedString());
 					
 
 				}
