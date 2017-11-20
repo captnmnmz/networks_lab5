@@ -36,9 +36,8 @@ public class ListReceiver implements SimpleMessageHandler {
 							//Is the SenderID already in our Peer list ? & I'm not the sender of the ListMessage
 							if(myMuxDemux.getPeerDatabase().containsKey(senderID) && !senderID.equals(myMuxDemux.getID())){
 								Database updated = new Database(lm.getSequenceNumber());
-								for (int i=0; i<totalParts; i++){
-									updated.add(lm.getData());
-								}
+								updated.add(lm.getData());
+								
 								myMuxDemux.getPeerDatabase().put(senderID, updated);
 								PeerTable.sync(senderID,lm.getSequenceNumber());
 								
