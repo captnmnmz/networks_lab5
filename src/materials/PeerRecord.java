@@ -40,8 +40,8 @@ public class PeerRecord {
 		this.synTime=System.currentTimeMillis();
 	}
 	
-	public void setExpirationTime(){
-		this.expirationTime=System.currentTimeMillis();
+	public void setExpirationTime(int HelloInterval){
+		this.expirationTime=HelloInterval*1000+System.currentTimeMillis();
 	}
 	
 	public int getHelloInterval(){

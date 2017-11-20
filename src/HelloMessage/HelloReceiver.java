@@ -22,7 +22,8 @@ public class HelloReceiver implements SimpleMessageHandler {
 						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
 					}
 					//Update peer in any case
-					PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber());
+					int HelloInterval = hm.getHelloInterval();
+					PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber(), HelloInterval);
 					//String message = hm.toString();
 					//Print the content on the screen
 					//System.out.println("Received : " +message);
