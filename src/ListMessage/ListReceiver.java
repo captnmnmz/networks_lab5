@@ -41,7 +41,6 @@ public class ListReceiver implements SimpleMessageHandler {
 								}
 								myMuxDemux.getPeerDatabase().put(senderID, updated);
 								PeerTable.sync(senderID);
-								
 								PeerTable.cancelTask(senderID);
 							}
 

@@ -16,13 +16,19 @@ public class HelloReceiver implements SimpleMessageHandler {
 			try {
 				String received = incoming.dequeue();
 				HelloMessage hm = new HelloMessage(received);
+				// Not my HelloMessage
 				if (!hm.getSenderId().equals(myMuxDemux.getID())){
 					if (!PeerTable.containsPeer(hm.getSenderId())) {
 						System.out.println("Doesn't know peer");
 						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
 					}
 					//Update peer in any case
-					PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber());
+					int HelloInterval = hm.getHelloInterval();
+					PeerTable.updatePeer(hm.getSenderId(),hm.getSequenceNumber(), HelloInterval);
+					//String message = hm.toString();
+					//Print the content on the screen
+					//System.out.println("Received : " +message);
+
 				}
 
 				

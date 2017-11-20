@@ -60,28 +60,28 @@ public class PeerTable {
 	public static synchronized void sync(String peerID){
 		PeerRecord peer = table.get(peerID);
 		peer.setPeerState(PeerState.SYNCHRONIZED);
-		peer.setExpirationTime();
+		peer.setExpirationTime(peer.getHelloInterval());
 	}
 	
-	public static synchronized void updatePeer(String peerID, int seqNumber){
+	public static synchronized void updatePeer(String peerID, int seqNumber, int HelloInterval){
 		PeerRecord peer = table.get(peerID);
 
 		if (peer.getPeerSeqNum()!=seqNumber){
 			if (peer.getPeerState()==PeerState.SYNCHRONIZED || peer.getPeerState()==PeerState.HEARD){
-				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, peer.getHelloInterval(), peer.getPeerState());
+				PeerRecord synPeer = new PeerRecord(peer.getPeerId(), peer.getAddress(), seqNumber, HelloInterval, peer.getPeerState());
 				queue.enqueue(synPeer);
 			}
 			peer.setPeerState(PeerState.INCONSISTENT);
-			peer.setExpirationTime();
+			peer.setExpirationTime(HelloInterval);
 			
 		}
 		if (peer.getPeerState()==PeerState.INCONSISTENT){
 			peer.setPeerState(PeerState.INCONSISTENT);
-			peer.setExpirationTime();
+			peer.setExpirationTime(HelloInterval);
 		}
 		if (peer.getPeerState()==PeerState.SYNCHRONIZED && peer.getPeerSeqNum()==seqNumber){
 			peer.setPeerState(PeerState.SYNCHRONIZED);
-			peer.setExpirationTime();
+			peer.setExpirationTime(HelloInterval);
 			
 		}
 	}
@@ -97,11 +97,10 @@ public class PeerTable {
 		ArrayList<String> PeerList= new ArrayList<String>();
 		if(table.size() == 0) {
 			return PeerList ;
-		}
-		if(!table.keySet().isEmpty()){
+		}else{
 			PeerTable.cleanUp();
 			for (String id : table.keySet()){
-				PeerList.add(table.get(id).getPeerId());
+				PeerList.add(id);
 
 			}
 			
