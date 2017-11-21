@@ -32,7 +32,10 @@ public class MuxDemuxSimple implements Runnable {
 		this.peerID = peerID;
 		my_db=new Database(-1);
 		my_db.add("data_1");
+		my_db.updateDB();
 		my_db.add("data_2");
+		my_db.updateDB();
+		
 		peers_db=new HashMap<String,Database>();
 
 	}
