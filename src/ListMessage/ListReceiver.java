@@ -46,8 +46,9 @@ public class ListReceiver implements SimpleMessageHandler {
 								/*If the sequence number of this existing peer's database is different of the sequence number we receive
 											ie. if it's necessary to update the database*/
 								if(peer_db.getDatabaseSequenceNumber()!=lm.getSequenceNumber()) {
+									
+									//This is the first ListMessage of the update
 									if (peer_db.getTotalparts()==0) {
-
 										/* INITIALIZATION */
 										//Set the number of Totalparts in the Database of the peer
 										peer_db.setTotalparts(lm.getTotalParts());
@@ -57,12 +58,13 @@ public class ListReceiver implements SimpleMessageHandler {
 
 									new_db.add(lm.getData());
 
-									//The ListMessage was completely received, we can stop the SynMessage sending
+									//The ListMessage was completely received
 									if(peer_db.getTotalparts() == lm.getPartNumber() + 1) {
 										peer_db.updateDB(new_db);
 										//Reset the number of TotalParts
 										peer_db.setTotalparts(0);
 										PeerTable.sync(senderID,lm.getSequenceNumber());
+										//We can stop the SynMessage sending
 										PeerTable.cancelTask(senderID);
 									}
 								}
