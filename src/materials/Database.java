@@ -1,21 +1,13 @@
 package materials;
 
 
-import java.util.HashMap;
-
-import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.List;
 
-/**
- * ListReceiver is the class that will handle ListMessage and update the data associated to a peer in the Peer Table
- * 
- * @author Bastien Chevallier & Jules Yates
- *
- */
+
 public class Database {
 
 	private int seqNum;
+	private int totalparts = 0;
 
 	private  ArrayList<String> db = new ArrayList<String>();
 	
@@ -25,8 +17,8 @@ public class Database {
 
 	/**
 	 * 
-	 * This method aims to update the database. The sequence number is then incremented
-	 * This method is called only in the case of our local database
+	 * This method aims to update the database. The sequence number is incremented
+	 *
 	 * 
 	 * @param new_db
 	 * 			This is an ArrayList<String> that will replace the current database
@@ -38,14 +30,13 @@ public class Database {
 	
 	/**
 	 * 
-	 * This method aims to add data to the ArrayList<String> db. The sequence number is then incremented
+	 * This method aims to add data to the ArrayList<String> db.
 	 * 
 	 * @param entry
 	 * 			String data that will be added to the database
 	 */
 	public synchronized void add(String entry){
 		this.db.add(entry);
-		this.seqNum++;
 	}
 	
 	public synchronized ArrayList<String> getData(){
@@ -55,6 +46,15 @@ public class Database {
 
 	public synchronized int getDatabaseSequenceNumber(){
 		return seqNum;
+	}
+	
+
+	public synchronized int getTotalparts() {
+		return totalparts;
+	}
+
+	public synchronized void setTotalparts(int totalparts) {
+		this.totalparts = totalparts;
 	}
 
 }
