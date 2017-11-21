@@ -8,6 +8,7 @@ public class Database {
 
 	private int seqNum;
 	private int totalparts = 0;
+	private int counter = 0;
 
 	private  ArrayList<String> db = new ArrayList<String>();
 	
@@ -20,12 +21,15 @@ public class Database {
 	 * This method aims to update the database. The sequence number is incremented
 	 *
 	 * 
-	 * @param new_db
-	 * 			This is an ArrayList<String> that will replace the current database
+	 * 
 	 */
-	public synchronized void updateDB(ArrayList<String> new_db){
-		this.db=new_db;
+	public synchronized void updateDB(){
 		this.seqNum++;
+	}
+	
+	public synchronized void resetDB(){
+		this.db = new ArrayList<String>();
+		this.counter=0;
 	}
 	
 	/**
@@ -34,6 +38,7 @@ public class Database {
 	 */
 	public synchronized void add(String entry){
 		this.db.add(entry);
+		counter++;
 	}
 	
 	/**
@@ -43,6 +48,7 @@ public class Database {
 	 */
 	public synchronized void add(int index, String entry){
 		this.db.add(index, entry);
+		counter++;
 	}
 	
 	public synchronized ArrayList<String> getData(){
@@ -61,6 +67,10 @@ public class Database {
 
 	public synchronized void setTotalparts(int totalparts) {
 		this.totalparts = totalparts;
+	}
+	
+	public synchronized int getCounter(){
+		return this.counter;
 	}
 
 }

@@ -29,7 +29,7 @@ import materials.Database;
 public class ListReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	private  ArrayList<String> new_db;
+
 
 	@Override
 	public void run() {
@@ -57,19 +57,25 @@ public class ListReceiver implements SimpleMessageHandler {
 									
 									if (lm.getPartNumber()==0 && peer_db.getTotalparts()==0){
 										/* INITIALIZATION */
+										//reset the peer databse
+										peer_db.resetDB();
 										//Set the number of Totalparts in the Database of the peer
 										peer_db.setTotalparts(lm.getTotalParts());
 										//Initialization of the new_db
-										new_db = new ArrayList<String>();
-										new_db.add(lm.getData());
-										peer_db.updateDB(new_db);
+										peer_db.add(lm.getData());
+										
 									}else if (lm.getPartNumber()<lm.getTotalParts()-1){
 										peer_db.add(lm.getPartNumber(), lm.getData());
 									}else if (lm.getPartNumber()+1==lm.getTotalParts()){
 										peer_db.add(lm.getPartNumber(), lm.getData());
 									}
-									if (peer_db.getTotalparts()==lm.getTotalParts()){
+									if (peer_db.getCounter()==lm.getTotalParts()){
+										//update the sequence number in the database
+										peer_db.updateDB();
+										//synchronized peerrecord in peertable
 										PeerTable.sync(senderID, lm.getSequenceNumber());
+										//cancel SYN timertask
+										System.out.println("timertask cancelled");
 										PeerTable.cancelTask(senderID);
 										//we reinitialise the totalparts counter for another LIST message
 										peer_db.setTotalparts(0);
@@ -123,12 +129,6 @@ public class ListReceiver implements SimpleMessageHandler {
 		myMuxDemux = md;
 	}
 
-	public synchronized ArrayList<String> getNewDB() {
-		return new_db;
-	}
 
-	public synchronized void setNewDB(ArrayList<String> new_database) {
-		new_db = new_database;
-	}
 
 }
