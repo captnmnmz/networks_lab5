@@ -26,7 +26,7 @@ public class Test {
 				handlers[3]= new SynReceiver();
 				handlers[4]= new ListReceiver();
 				handlers[5]= new SynSender();
-				MuxDemuxSimple dm = new MuxDemuxSimple(handlers, mySocket,"Bastien", 10);
+				MuxDemuxSimple dm = new MuxDemuxSimple(handlers, mySocket,"Oliver", 10);
 				new Thread(dm).start();
 				new Thread(handlers[0]).start();
 				new Thread(handlers[1]).start();

@@ -56,13 +56,16 @@ public class ListReceiver implements SimpleMessageHandler {
 										peer_db.setTotalparts(lm.getTotalParts());
 										//Initialization of the new_db
 										new_db = new ArrayList<String>();
+										new_db.add(lm.getData());
+										peer_db.updateDB(new_db);
 									}
 
-									new_db.add(lm.getData());
+									
 
 									//The ListMessage was completely received
 									if(peer_db.getTotalparts() == lm.getPartNumber() + 1) {
-										peer_db.updateDB(new_db);
+										peer_db.add(lm.getData());
+										
 										//Reset the number of TotalParts
 										peer_db.setTotalparts(0);
 										PeerTable.sync(senderID,lm.getSequenceNumber());
