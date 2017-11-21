@@ -3,6 +3,11 @@ package materials;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+/**
+ * This class is a synchronized wrapper for a regular queue. It is used for the "incoming" queues of the different handlers.
+ * @author jules
+ *
+ */
 public class SynchronizedQueue {
 	
 	private final LinkedList<String> queue;

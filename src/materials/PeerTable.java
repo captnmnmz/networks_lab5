@@ -5,6 +5,14 @@ import java.util.HashMap;
 import java.util.TimerTask;
 import java.util.List;
 
+/**
+ * The TimerMap class is a synchronized wrapper for a HashMap containing TimerTasks. It is meant to store the SYN message timertasks, in order 
+ * to cancel them when the corresponding LIST message is received.
+ * 
+ * @author Jules YATES
+ * @author Bastien CHEVALLIER
+ *
+ */
 class TimerMap{
 	HashMap<String, TimerTask> map = new HashMap<String, TimerTask>();
 	
@@ -25,6 +33,12 @@ class TimerMap{
 	}
 }
 
+/**
+ * PeerTable is a static class, as it is shared by all useful instances of our client. It is an advanced wrapper for a HashMap of PeerRecords. 
+ * 
+ * @author jules
+ *
+ */
 public class PeerTable {
 	private static HashMap<String,PeerRecord> table = new HashMap<String,PeerRecord>() ;
 	
@@ -32,11 +46,27 @@ public class PeerTable {
 	
 	private static TimerMap timerMap = new TimerMap();
 
+	/**
+	 * This method is used to add an unknown peerrecord to the HashMap
+	 * @param peerID 
+	 * @param peerIPAddress
+	 * @param HelloInterval
+	 */
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
 		table.put(peerID, peer);
 	}
 	
+	/**
+	 * this method adds a new peerrecord in the HashMap directly atht eh synchronized state.
+	 * It can be used to replace a deprecated instance of a PeerRecord in the HashMap.
+	 * 
+	 * @deprecated
+	 * @param peerID
+	 * @param peerIPAddress
+	 * @param HelloInterval
+	 * @param seqNum the actualised sequence number of the corresponding peer
+	 */
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval, int seqNum){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, seqNum, HelloInterval, PeerState.SYNCHRONIZED);
 		table.put(peerID, peer);
@@ -57,6 +87,11 @@ public class PeerTable {
 		return false;
 	}
 	
+	/**
+	 * This method synchronizes a peer in the table, with the new sequence number
+	 * @param peerID
+	 * @param seqNum
+	 */
 	public static synchronized void sync(String peerID, int seqNum){
 		PeerRecord peer = table.get(peerID);
 		peer.setPeerSeqNum(seqNum);
@@ -64,6 +99,13 @@ public class PeerTable {
 		peer.setExpirationTime(peer.getHelloInterval());
 	}
 	
+	/**
+	 * This method modifies the state of a peer depending on the sequence number received in a HELLO message
+	 * and its state.
+	 * @param peerID
+	 * @param seqNumber
+	 * @param HelloInterval
+	 */
 	public static synchronized void updatePeer(String peerID, int seqNumber, int HelloInterval){
 		PeerRecord peer = table.get(peerID);
 
@@ -96,7 +138,10 @@ public class PeerTable {
 	
 
 
-
+	/**
+	 * This method returns an ArrayList of the updated peer ids contained in our table
+	 * @return
+	 */
 	public static synchronized ArrayList<String> sendPeersID(){
 		ArrayList<String> PeerList= new ArrayList<String>();
 		if(table.size() == 0) {
@@ -111,7 +156,10 @@ public class PeerTable {
 		}
 		return PeerList;
 	}
-	
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public static synchronized HashMap<String,Integer> sendDBData(){
 		HashMap<String,Integer> db = new HashMap<String,Integer>();
 		if(table.size() == 0) {
@@ -127,6 +175,9 @@ public class PeerTable {
 		return db;
 	}
 	
+	/**
+	 * This method checks all entities in the peertable and deletes those who have expired.
+	 */
 	public static synchronized void cleanUp(){
 		List<String> toRemove = new ArrayList<String>();
 		if (!table.keySet().isEmpty()){
@@ -143,10 +194,19 @@ public class PeerTable {
 		}
 	}
 	
+	/**
+	 * Adds a timertask to the timer map
+	 * @param id
+	 * @param task
+	 */
 	public static synchronized void addTask(String id, TimerTask task){
 		timerMap.put(id, task);
 	}
 	
+	/**
+	 * Cancels a designated task in the timer map
+	 * @param id
+	 */
 	public static synchronized void cancelTask(String id){
 		if(timerMap.contains(id)){
 			timerMap.get(id).cancel();

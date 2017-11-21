@@ -2,6 +2,11 @@ package materials;
 
 import java.net.InetAddress;
 
+/**
+ * This class 
+ * @author jules
+ *
+ */
 public class PeerRecord {
 	private String peerID;
 	InetAddress peerIPAddress;
