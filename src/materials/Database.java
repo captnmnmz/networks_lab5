@@ -29,14 +29,20 @@ public class Database {
 	}
 	
 	/**
-	 * 
-	 * This method aims to add data to the ArrayList<String> db.
-	 * 
+	 * This method adds a String in the database
 	 * @param entry
-	 * 			String data that will be added to the database
 	 */
 	public synchronized void add(String entry){
 		this.db.add(entry);
+	}
+	
+	/**
+	 * This method adds a String at the specified index in the databse
+	 * @param index
+	 * @param entry
+	 */
+	public synchronized void add(int index, String entry){
+		this.db.add(index, entry);
 	}
 	
 	public synchronized ArrayList<String> getData(){

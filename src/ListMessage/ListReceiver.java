@@ -20,6 +20,12 @@ import materials.Database;
  *
  */
 
+/**
+ * This class handles incoming LIST messages, starts Threads for each new one and manages the cancellation of the SYN sender TimerTasks.
+ * @author Jules YATES
+ * @author Bastien CHEVALLIER
+ *
+ */
 public class ListReceiver implements SimpleMessageHandler {
 	private MuxDemuxSimple myMuxDemux= null;
 	private SynchronizedQueue incoming = new SynchronizedQueue(20);
@@ -49,8 +55,7 @@ public class ListReceiver implements SimpleMessageHandler {
 											ie. if it's necessary to update the database*/
 								if(peer_db.getDatabaseSequenceNumber()!=lm.getSequenceNumber()) {
 									
-									//This is the first ListMessage of the update
-									if (peer_db.getTotalparts()==0) {
+									if (lm.getPartNumber()==0 && peer_db.getTotalparts()==0){
 										/* INITIALIZATION */
 										//Set the number of Totalparts in the Database of the peer
 										peer_db.setTotalparts(lm.getTotalParts());
@@ -58,20 +63,19 @@ public class ListReceiver implements SimpleMessageHandler {
 										new_db = new ArrayList<String>();
 										new_db.add(lm.getData());
 										peer_db.updateDB(new_db);
+									}else if (lm.getPartNumber()<lm.getTotalParts()-1){
+										peer_db.add(lm.getPartNumber(), lm.getData());
+									}else if (lm.getPartNumber()+1==lm.getTotalParts()){
+										peer_db.add(lm.getPartNumber(), lm.getData());
 									}
-
-									
-
-									//The ListMessage was completely received
-									if(peer_db.getTotalparts() == lm.getPartNumber() + 1) {
-										peer_db.add(lm.getData());
-										
-										//Reset the number of TotalParts
-										peer_db.setTotalparts(0);
-										PeerTable.sync(senderID,lm.getSequenceNumber());
-										//We can stop the SynMessage sending
+									if (peer_db.getTotalparts()==lm.getTotalParts()){
+										PeerTable.sync(senderID, lm.getSequenceNumber());
 										PeerTable.cancelTask(senderID);
+										//we reinitialise the totalparts counter for another LIST message
+										peer_db.setTotalparts(0);
+										
 									}
+									
 								}
 							}
 						}
