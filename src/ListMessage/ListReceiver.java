@@ -35,26 +35,25 @@ public class ListReceiver implements SimpleMessageHandler {
 
 					String senderID = lm.getSenderId();
 
-					//Is the SenderID already in our Peer list ? & I'm not the sender of the ListMessage
-					if(myMuxDemux.getPeerDatabase().containsKey(senderID) && !senderID.equals(myMuxDemux.getID())) {
+					Runnable listReceiver = new Runnable(){
+						@Override
+						public void run(){
+							//Is the SenderID already in our Peer list ? & I'm not the sender of the ListMessage
+							if(myMuxDemux.getPeerDatabase().containsKey(senderID) && !senderID.equals(myMuxDemux.getID())) {
 
-						Database peer_db = myMuxDemux.getPeerDatabase().get(senderID);
+								Database peer_db = myMuxDemux.getPeerDatabase().get(senderID);
 
-						/*If the sequence number of this existing peer's database is different of the sequence number we receive
-							ie. if it's necessary to update the database*/
-						if(peer_db.getDatabaseSequenceNumber()!=lm.getSequenceNumber()) {
-							if (peer_db.getTotalparts()==0) {
+								/*If the sequence number of this existing peer's database is different of the sequence number we receive
+											ie. if it's necessary to update the database*/
+								if(peer_db.getDatabaseSequenceNumber()!=lm.getSequenceNumber()) {
+									if (peer_db.getTotalparts()==0) {
 
-								/* INITIALISATION
-								Set the number of Totalparts in the Database of the peer*/
-								peer_db.setTotalparts(lm.getTotalParts());
-								//Initialisation of the new_db
-								new_db = new ArrayList<String>();
-							}
-
-							Runnable listReceiver = new Runnable(){
-								@Override
-								public void run(){
+										/* INITIALIZATION */
+										//Set the number of Totalparts in the Database of the peer
+										peer_db.setTotalparts(lm.getTotalParts());
+										//Initialization of the new_db
+										new_db = new ArrayList<String>();
+									}
 
 									new_db.add(lm.getData());
 
@@ -67,12 +66,11 @@ public class ListReceiver implements SimpleMessageHandler {
 										PeerTable.cancelTask(senderID);
 									}
 								}
-							};
-
-							Thread receiverThread = new Thread(listReceiver);
-							receiverThread.start();
+							}
 						}
-					}
+					};
+					Thread receiverThread = new Thread(listReceiver);
+					receiverThread.start();
 				}
 			}catch(IllegalArgumentException e) {
 				if(e.getMessage().equals("The message must begin by LIST \n\r"
