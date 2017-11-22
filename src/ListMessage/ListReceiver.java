@@ -15,7 +15,8 @@ import materials.Database;
  * ListReceiver is the class that will handle ListMessage and update the data associated to a peer in the Peer Table, launching new threads
  * to recuperate LIST messages destined for us.
  * 
- * @author Bastien Chevallier & Jules Yates
+ * @author Bastien Chevallier
+ * @author Jules Yates
  * 
  *
  */

@@ -1,4 +1,5 @@
 package materials;
+import java.io.File;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,10 @@ public class PeerTable {
 	public static synchronized void addPeer(String peerID, InetAddress peerIPAddress, int HelloInterval){
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
 		table.put(peerID, peer);
+		//Create a directory for this new peer
+		if(! new File("/Users/bastienchevallier/Documents/IoT"+peerID).exists()) {
+			new File("/Users/bastienchevallier/Documents/IoT"+peerID).mkdir();
+		}
 	}
 	
 	/**

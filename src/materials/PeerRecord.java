@@ -3,8 +3,10 @@ package materials;
 import java.net.InetAddress;
 
 /**
- * This class 
- * @author jules
+ * This class contains the relative informations of a peer
+ * 
+ * @author Bastien Chevallier
+ * @author Jules Yates
  *
  */
 public class PeerRecord {
