@@ -61,15 +61,16 @@ public class ListReceiver implements SimpleMessageHandler {
 										peer_db.resetDB();
 										//Set the number of Totalparts in the Database of the peer
 										peer_db.setTotalparts(lm.getTotalParts());
+										peer_db.ensureCapacity(lm.getTotalParts());
 										//Initialization of the new_db
 										peer_db.add(lm.getData());
 										
 									}else if (lm.getPartNumber()<lm.getTotalParts()-1){
-										peer_db.add(lm.getPartNumber(), lm.getData());
+										peer_db.add(lm.getData());
 									}else if (lm.getPartNumber()+1==lm.getTotalParts()){
-										peer_db.add(lm.getPartNumber(), lm.getData());
+										peer_db.add(lm.getData());
 									}
-									if (peer_db.getCounter()==lm.getTotalParts()){
+									if (peer_db.getCounter()==lm.getTotalParts() && peer_db.getDBsize()==lm.getTotalParts()){
 										//update the sequence number in the database
 										peer_db.updateDB();
 										//synchronized peerrecord in peertable
@@ -80,6 +81,9 @@ public class ListReceiver implements SimpleMessageHandler {
 										//we reinitialise the totalparts counter for another LIST message
 										peer_db.setTotalparts(0);
 										
+									}else if (peer_db.getCounter()==lm.getTotalParts() && peer_db.getDBsize()!=lm.getTotalParts()){
+										peer_db.resetDB();
+										peer_db.setTotalparts(0);
 									}
 									
 								}

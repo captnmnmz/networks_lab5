@@ -28,7 +28,7 @@ public class Database {
 	}
 	
 	public synchronized void resetDB(){
-		this.db = new ArrayList<String>();
+		this.db.clear();
 		this.counter=0;
 	}
 	
@@ -41,15 +41,7 @@ public class Database {
 		counter++;
 	}
 	
-	/**
-	 * This method adds a String at the specified index in the databse
-	 * @param index
-	 * @param entry
-	 */
-	public synchronized void add(int index, String entry){
-		this.db.add(index, entry);
-		counter++;
-	}
+
 	
 	public synchronized ArrayList<String> getData(){
 		return db;
@@ -71,6 +63,14 @@ public class Database {
 	
 	public synchronized int getCounter(){
 		return this.counter;
+	}
+	
+	public synchronized void ensureCapacity(int min){
+		this.db.ensureCapacity(min);
+	}
+	
+	public synchronized int getDBsize(){
+		return this.db.size();
 	}
 
 }

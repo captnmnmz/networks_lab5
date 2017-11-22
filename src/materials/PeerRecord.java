@@ -3,7 +3,7 @@ package materials;
 import java.net.InetAddress;
 
 /**
- * This class 
+ * This class stores all useful information about a peer : its sequence number, state, expiration time,...
  * @author jules
  *
  */

@@ -10,7 +10,8 @@ import ListMessage.ListMessage;
 /**
  * This class is a synchronized set that keeps tabs on which peers are been dealt by the SYN handler (or more precisely by its sub-threads)
  * 
- * @author jules
+ * @author Jules YATES
+ * @author Bastien CHEVALLIER
  *
  */
 class SynProcessing{
