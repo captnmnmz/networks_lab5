@@ -1,12 +1,16 @@
 package materials;
 
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Database {
 
 	private int seqNum;
+	private int SCREENINTERVALL;
 	private int totalparts = 0;
 	private int counter = 0;
 
@@ -14,6 +18,7 @@ public class Database {
 	
 	public Database(int seqNum) {
 		this.seqNum = seqNum;
+	
 	}
 
 	/**
@@ -27,8 +32,38 @@ public class Database {
 		this.seqNum++;
 	}
 	
+	
+	/**
+	 * 
+	 * This method screens periodically the root folder in order to detect know folder or file and add them to the Database
+	 * 
+	 */
+	public synchronized void screenDB() {
+		File root_folder = new File("/Users/bastienchevallier/Documents/IoT");
+		
+		Timer TIMER = new Timer("ScreenTimer", true);
+		Database db_to_screen = this;
+		TimerTask screen = new TimerTask() {
+			@Override
+			public void run() {
+				File[] listOfFiles = root_folder.listFiles();
+				for (int i=0; i<listOfFiles.length; i++) {
+					
+					// Add the the path name to the database if a new folder or file was added
+					if(!db.contains(listOfFiles[i].getName())) {
+						db.add(listOfFiles[i].getName());
+						//Increment the sequence number
+						db_to_screen.updateDB();
+					}
+				}
+				
+			}
+		};
+		TIMER.schedule(screen,0,SCREENINTERVALL);
+	}
+	
 	public synchronized void resetDB(){
-		this.db = new ArrayList<String>();
+		this.db.clear();
 		this.counter=0;
 	}
 	
@@ -41,15 +76,7 @@ public class Database {
 		counter++;
 	}
 	
-	/**
-	 * This method adds a String at the specified index in the databse
-	 * @param index
-	 * @param entry
-	 */
-	public synchronized void add(int index, String entry){
-		this.db.add(index, entry);
-		counter++;
-	}
+
 	
 	public synchronized ArrayList<String> getData(){
 		return db;
@@ -71,6 +98,14 @@ public class Database {
 	
 	public synchronized int getCounter(){
 		return this.counter;
+	}
+	
+	public synchronized void ensureCapacity(int min){
+		this.db.ensureCapacity(min);
+	}
+	
+	public synchronized int getDBsize(){
+		return this.db.size();
 	}
 
 }

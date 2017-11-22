@@ -6,6 +6,7 @@ import java.net.MulticastSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -31,11 +32,10 @@ public class MuxDemuxSimple implements Runnable {
 		this.HelloInterval=HelloInterval;
 		this.peerID = peerID;
 		my_db=new Database(-1);
-		my_db.add("data_1");
-		my_db.updateDB();
-		my_db.add("data_2");
-		my_db.updateDB();
-		
+		//Run the thread that will screen the root folder and update the database
+		my_db.screenDB();
+		// We create our own directory
+		new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder").mkdir();
 		peers_db=new HashMap<String,Database>();
 
 	}
