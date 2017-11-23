@@ -75,7 +75,7 @@ public class ListReceiver implements SimpleMessageHandler {
 										//update the sequence number in the database
 										peer_db.updateDB();
 										//synchronized peerrecord in peertable
-										PeerTable.sync(senderID, lm.getSequenceNumber());
+										PeerTable.sync(peer_db, senderID, lm.getSequenceNumber());
 										//cancel SYN timertask
 										System.out.println("timertask cancelled");
 										PeerTable.cancelTask(senderID);

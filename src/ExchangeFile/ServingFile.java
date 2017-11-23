@@ -53,9 +53,10 @@ public class ServingFile {
 					// Read the content of the file and push it into the message
 					in = new FileReader(file);
 					BufferedReader bin = new BufferedReader(in);
+					String line;
 					while (bin.ready()) {
-						if (!"".equals(bin.readLine())){
-							message += bin.readLine() + System.getProperty( "line.separator" ) ;
+						if (!"".equals(line = bin.readLine())){
+							message += line + System.getProperty( "line.separator" ) ;
 						}
 					}
 					//Close FileReader and BufferedReader

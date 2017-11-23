@@ -4,6 +4,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimerTask;
+
+import ExchangeFile.GettingAllFilesFromPeer;
+
 import java.util.List;
 
 /**
@@ -95,10 +98,15 @@ public class PeerTable {
 	
 	/**
 	 * This method synchronizes a peer in the table, with the new sequence number
+	 * 
+	 * @param peer_db 
+	 * 			Database of the peer to synchronized that contains all filenames
 	 * @param peerID
+	 * 			This is a String that represents the id of the peer
 	 * @param seqNum
+	 * 			The number that corresponds to the version of the peer's database
 	 */
-	public static synchronized void sync(String peerID, int seqNum){
+	public static synchronized void sync(Database peer_db, String peerID, int seqNum){
 		PeerRecord peer = table.get(peerID);
 		peer.setPeerSeqNum(seqNum);
 		peer.setPeerState(PeerState.SYNCHRONIZED);
@@ -106,6 +114,8 @@ public class PeerTable {
 		
 		//Once we have SYNchronised with a peer, you should prepare to download a copy of the files that are advertised from it
 		//TODO
+		GettingAllFilesFromPeer download = new GettingAllFilesFromPeer(peer_db, peerID);
+		new Thread(download).start();
 	}
 	
 	/**
