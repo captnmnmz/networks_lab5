@@ -58,7 +58,7 @@ public class ListReceiver implements SimpleMessageHandler {
 									
 									if (lm.getPartNumber()==0 && peer_db.getTotalparts()==0){
 										/* INITIALIZATION */
-										//reset the peer databse
+										//reset the peer database
 										peer_db.resetDB();
 										//Set the number of Totalparts in the Database of the peer
 										peer_db.setTotalparts(lm.getTotalParts());

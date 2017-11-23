@@ -37,7 +37,8 @@ class TimerMap{
 /**
  * PeerTable is a static class, as it is shared by all useful instances of our client. It is an advanced wrapper for a HashMap of PeerRecords. 
  * 
- * @author jules
+ * @author Bastien CHEVALLIER
+ * @author Jules YATES
  *
  */
 public class PeerTable {
@@ -102,11 +103,15 @@ public class PeerTable {
 		peer.setPeerSeqNum(seqNum);
 		peer.setPeerState(PeerState.SYNCHRONIZED);
 		peer.setExpirationTime(peer.getHelloInterval());
+		
+		//Once we have SYNchronised with a peer, you should prepare to download a copy of the files that are advertised from it
+		//TODO
 	}
 	
 	/**
 	 * This method modifies the state of a peer depending on the sequence number received in a HELLO message
 	 * and its state.
+	 * 
 	 * @param peerID
 	 * @param seqNumber
 	 * @param HelloInterval

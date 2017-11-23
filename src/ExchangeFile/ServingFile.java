@@ -1,74 +1,112 @@
 package ExchangeFile;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ListMessage.ListMessage;
-import materials.Database;
 import materials.MuxDemuxSimple;
-import materials.PeerTable;
 import materials.SimpleMessageHandler;
 import materials.SynchronizedQueue;
 
-public class ServingFile implements SimpleMessageHandler {
-	private MuxDemuxSimple myMuxDemux= null;
-	private SynchronizedQueue incoming = new SynchronizedQueue(20);
-	
-	
-	@Override
-	public void run() {
-		while(true) {
-			try {
-				String request = incoming.dequeue();
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
-				// TODO Is ListMessage for me ?
-				// if (myMuxDemux.getID().equals(.getPeerId())) {
-				//}
-				String reg_exp = "(get ([^ \\n]*)\\n)";
-				Pattern pattern = Pattern.compile(reg_exp);
-				Matcher matcher = pattern.matcher(request);
-				
-				//TODO
-			}catch(IllegalArgumentException e) {
-				if(e.getMessage().equals("The message must begin by LIST \n\r"
-						+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;")) {
-					//Do nothing : the message wasn't a SynMessage
-				}else {
-					//The SynMessage wasn't formatted as it was supposed to be
-					System.err.println(e.getMessage());
+
+public class ServingFile {
+	private int PORT = 4242;
+	private int backlog = 3;
+	//TODO Set queue's size
+
+	public ServingFile(int port, int backlog) {
+		this.PORT = port;
+		this.backlog = backlog;
+	}
+	
+	public void send(Socket s, String message) {
+		try {
+			OutputStream output = s.getOutputStream();
+			PrintWriter pw = new PrintWriter(output,true);
+			pw.println(message);
+		}catch(IOException e) {
+			System.err.println(e);
+		}
+	}
+	
+	public synchronized String formatMessage(String filename) throws FileNotFoundException {
+			String message="";
+			//Eventually, throws a FileNotFoundException
+			File file = new File("/Users/bastienchevallier/Documents/IoT"+filename);
+			if (file.isFile()) {
+				message = filename + System.getProperty( "line.separator" ) ;
+				message += Long.toString(file.length()) + System.getProperty( "line.separator" );
+				FileReader in = null;
+				try {
+					// Read the content of the file and push it into the message
+					in = new FileReader(file);
+					BufferedReader bin = new BufferedReader(in);
+					while (bin.ready()) {
+						if (!"".equals(bin.readLine())){
+							message += bin.readLine() + System.getProperty( "line.separator" ) ;
+						}
+					}
+					//Close FileReader and BufferedReader
+					in.close();
+					bin.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-		}
-		
+			return message;
 	}
 
-	/**
-	 * 
-	 * This method aims to handle all the received messages
-	 * 
-	 * @param m
-	 * 		This is the message received which is enqueued in incoming
-	 */
-	@Override
-	public void handleMessage(String m) {
+	public void handleRequest(Socket s) {
 		try {
-			incoming.enqueue(m);
-		}catch(Exception e) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			
+			String request = br.readLine();
+			String reg_exp = "(get ([^ \\n]*)\\n)";
+			Pattern pattern = Pattern.compile(reg_exp);
+			Matcher matcher = pattern.matcher(request);
+
+			if (matcher.find()) {
+				String filename = matcher.group(1);
+				String message = formatMessage(filename);
+				this.send(s, message);
+			}
+		} catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+			try {
+				s.close();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
 	}
 
-	/**
-	 * 
-	 * This method aims to set the MuxDemuxSimple object of the class
-	 * 
-	 * @param md
-	 * 		A MuxDemuxSimple Object
-	 */
-	@Override
-	public void setMuxDemux(MuxDemuxSimple md) {
-		myMuxDemux = md;
+	public void serveFile() {
+		//Create a TCP connection listening on port 4242
+		try {
+			ServerSocket server = new ServerSocket(PORT,backlog);
+			while(true) {
+				Socket clientsocket = server.accept();
+				handleRequest(clientsocket);
+				server.close();
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
-	
-
 }
