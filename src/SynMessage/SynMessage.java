@@ -17,9 +17,8 @@ public class SynMessage {
 	 */
 
 	public SynMessage(String s) throws IllegalArgumentException {
-		String[] _s = s.split(";");
+		String[] _s = s.split(";",4);
 		//Verify that the first item is "SYN" ?
-
 		//Verify the number of features 
 		if(_s[0].equals("SYN")){
 			if(_s.length==4) {
@@ -37,7 +36,7 @@ public class SynMessage {
 							//Verify that peerID's length is lower or equal to 16
 							if(_s[1].length()<=16) {
 								peerID = _s[2];
-								sequence_num = Integer.parseInt(_s[3]);
+								sequence_num = Integer.parseInt(_s[3].replaceAll("[^0-9]", ""));
 
 							}else {
 								throw new IllegalArgumentException("The id is too large : id must be a string of up to 16 characters \n\r"

@@ -18,7 +18,7 @@ public class ListMessage {
 	 */
 
 	public ListMessage(String s) throws IllegalArgumentException {
-		String[] _s = s.split(";");
+		String[] _s = s.split(";",7);
 		//Verify that the first item is "LIST" ?
 
 		//Verify the number of features 
