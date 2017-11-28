@@ -44,7 +44,7 @@ public class ServingFile {
 	public synchronized String formatMessage(String filename) throws FileNotFoundException {
 			String message="";
 			//Eventually, throws a FileNotFoundException
-			File file = new File("/Users/bastienchevallier/Documents/IoT"+filename);
+			File file = new File("C:/Users/jules/Google Drive/Cours Polytechnique/From the internet to the IoT/"+filename);
 			if (file.isFile()) {
 				message = filename + System.getProperty( "line.separator" ) ;
 				message += Long.toString(file.length()) + System.getProperty( "line.separator" );

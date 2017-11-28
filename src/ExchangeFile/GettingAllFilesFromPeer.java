@@ -73,7 +73,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 	//TODO Define the size of the queue
 	private int PORT = 4242;
 	private String peerID;
-	private String root = "/Users/bastienchevallier/Documents/IoT/";
+	private String root = "C:/Users/jules/Google Drive/Cours Polytechnique/From the internet to the IoT/";
 	private FilenameQueue fileToDownload = new FilenameQueue(20);
 
 	public GettingAllFilesFromPeer(Database peer_db, String peerID) {
@@ -91,6 +91,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 			//TCP Client Socket with peerAddress
 			try {
 				//TODO the socket is created each time even if it is the same peer
+				System.out.println(PeerTable.getPeer(peerID).getAddress());
 				Socket clientsocket = new Socket(PeerTable.getPeer(peerID).getAddress(),PORT);
 
 				//Send the request for the corresponding filename
