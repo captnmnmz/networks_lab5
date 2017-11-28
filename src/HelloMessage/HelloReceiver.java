@@ -1,6 +1,4 @@
 package HelloMessage;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import materials.MuxDemuxSimple;
 import materials.PeerTable;
@@ -20,7 +18,7 @@ public class HelloReceiver implements SimpleMessageHandler {
 				// Not my HelloMessage
 				if (!hm.getSenderId().equals(myMuxDemux.getID())){
 					if (!PeerTable.containsPeer(hm.getSenderId())) {
-						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName("255.255.255.255"), hm.getHelloInterval());;
+						PeerTable.addPeer(hm.getSenderId(), myMuxDemux.getPeerIPAddress(), hm.getHelloInterval());;
 					}
 					if (!myMuxDemux.getPeerDatabase().containsKey(hm.getSenderId())){
 						Database peerDB = new Database(-1);
@@ -44,8 +42,6 @@ public class HelloReceiver implements SimpleMessageHandler {
 					//The HelloMessage wasn't formatted as it was supposed to be
 					System.err.println(e.getMessage());
 				}
-			} catch (UnknownHostException e) {
-				System.out.println(e.getMessage());
 			}
 		}
 	}

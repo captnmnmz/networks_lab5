@@ -100,9 +100,6 @@ public class GettingAllFilesFromPeer implements Runnable {
 				String request = "get " + filename +  System.getProperty( "line.separator" );
 				pw.println(request);
 
-				pw.close();
-				output.close();
-
 				//Receive the corresponding file
 				BufferedReader br = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
 				String line;
@@ -110,11 +107,16 @@ public class GettingAllFilesFromPeer implements Runnable {
 				FileWriter fw = new FileWriter(received_file);
 				BufferedWriter bw = new BufferedWriter(fw);
 				while(br.ready()) {
+					System.out.println("br ready");
 					if (!"".equals(line = br.readLine())){
+						System.out.println(line);
 						bw.write(line + System.getProperty( "line.separator" ));
 					}
 				}
 
+				pw.close();
+				output.close();
+				
 				bw.close();
 				fw.close();
 				br.close();
