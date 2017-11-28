@@ -17,7 +17,7 @@ public class SynMessage {
 	 */
 
 	public SynMessage(String s) throws IllegalArgumentException {
-		String[] _s = s.split(";");
+		String[] _s = s.split(";",4);
 		//Verify that the first item is "SYN" ?
 
 		//Verify the number of features 
