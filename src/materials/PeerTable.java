@@ -61,8 +61,8 @@ public class PeerTable {
 		PeerRecord peer = new PeerRecord(peerID, peerIPAddress, -1, HelloInterval, PeerState.HEARD);
 		table.put(peerID, peer);
 		//Create a directory for this new peer
-		if(! new File("/Users/bastienchevallier/Documents/IoT/"+peerID).exists()) {
-			new File("/Users/bastienchevallier/Documents/IoT/"+peerID).mkdir();
+		if(! new File(MuxDemuxSimple.root_path+peerID).exists()) {
+			new File(MuxDemuxSimple.root_path+peerID).mkdir();
 		}
 	}
 	

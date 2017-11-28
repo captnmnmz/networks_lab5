@@ -25,6 +25,7 @@ public class MuxDemuxSimple implements Runnable {
     private HashMap<String,Database> peers_db;
     private String peerID;
     private int HelloInterval;
+    public static String root_path = "/Users/bastienchevallier/Documents/IoT/";
 	
 	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s, String peerID, int HelloInterval) {
 		myS= s;
@@ -38,7 +39,7 @@ public class MuxDemuxSimple implements Runnable {
 		//Run the thread that will screen the root folder and update the database
 		my_db.screenDB();
 		// We create our own directory
-		new File("C:/Users/jules/Google Drive/Cours Polytechnique/From the internet to the IoT/mySharedFileFolder").mkdir();
+		new File(this.root_path+"mysharefilesfolder/").mkdir();
 		peers_db=new HashMap<String,Database>();
 		
 		ServingFile sf = new ServingFile(PORT,backlog);

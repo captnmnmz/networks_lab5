@@ -42,7 +42,7 @@ public class Database {
 	 */
 	public synchronized void screenDB() {
 		
-		File root_folder = new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder");
+		File root_folder = new File(MuxDemuxSimple.root_path + "mysharefilesfolder");
 		Timer TIMER = new Timer("ScreenTimer", true);
 		Database db_to_screen = this;
 		TimerTask screen = new TimerTask() {

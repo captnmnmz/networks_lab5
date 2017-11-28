@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.MissingResourceException;
 
 import materials.Database;
+import materials.MuxDemuxSimple;
 import materials.PeerTable;
 
 /**
@@ -76,7 +77,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 	//TODO Define the size of the queue
 	private int PORT = 4242;
 	private String peerID;
-	private String root = "/Users/bastienchevallier/Documents/IoT/";
+	private String root = MuxDemuxSimple.root_path;
 	private FilenameQueue fileToDownload = new FilenameQueue(20);
 
 	public GettingAllFilesFromPeer(Database peer_db, String peerID) {
@@ -102,9 +103,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 
 		//TODO change the length of the buffer
 		String filepath = root + peerID + "/" + filename;
-		int length = 1024;
-		char[] buffer = new char[length > 0 ? length : 0]; // initial allocation
-
+		
 		// readLine returns null when the end of the input stream has been reached,
 		// this means that the server has shutdown the stream,
 		// but it is not always the case ... or not always immediately ...
@@ -112,13 +111,15 @@ public class GettingAllFilesFromPeer implements Runnable {
 		// and also handle the case of chunked data
 		// used when the server doesn't know the length at start, or
 		// to accomodate with smaller buffer size.
+		
 		String line = "";
-		int count = 0;
 		// __Test__.assertFalse("chunked encoding not supported", chunked);
 
 		try {
 			line = answerStream.readLine();
+			System.out.println("LINE = " + line);
 			if (line.split(System.getProperty("line.separator"))[0].equals(filename)) {
+				System.out.println("Ready to download");
 				line = answerStream.readLine();
 				PrintWriter writer = new PrintWriter(filepath);		
 				while(answerStream.ready()) {
@@ -156,7 +157,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 
 				//Receive the corresponding file
 				BufferedReader br = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
-				download(br,root + peerID + "/" + filename );
+				download(br,filename);
 
 
 				pw.close();

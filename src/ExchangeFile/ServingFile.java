@@ -44,9 +44,10 @@ public class ServingFile implements Runnable {
 	public synchronized String formatMessage(String filename) throws FileNotFoundException {
 			String message="";
 			//Eventually, throws a FileNotFoundException
-
-			File file = new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder/"+filename);
+			System.out.println("Format = " +filename);
+			File file = new File(MuxDemuxSimple.root_path+"mysharefilesfolder/"+filename);
 			if (file.isFile()) {
+				
 				message = filename + System.getProperty( "line.separator" ) ;
 				message += Long.toString(file.length()) + System.getProperty( "line.separator" );
 				FileReader in = null;
@@ -54,11 +55,11 @@ public class ServingFile implements Runnable {
 					// Read the content of the file and push it into the message
 					in = new FileReader(file);
 					BufferedReader bin = new BufferedReader(in);
-					String line;
-					while (bin.ready()) {
-						if (!"".equals(line = bin.readLine())){
-							message += line + System.getProperty( "line.separator" ) ;
-						}
+					String line = bin.readLine();
+					while (line != null) {
+						
+						message += line + System.getProperty( "line.separator" ) ;
+						line = bin.readLine();
 					}
 					//Close FileReader and BufferedReader
 					in.close();
@@ -76,7 +77,7 @@ public class ServingFile implements Runnable {
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			
 			String request = br.readLine();
-			String reg_exp = "(get (.*))";
+			String reg_exp = "get (.*)";
 			Pattern pattern = Pattern.compile(reg_exp);
 			Matcher matcher = pattern.matcher(request);
 
