@@ -23,11 +23,11 @@ public class HelloMessage {
 	 */
 
 	public HelloMessage(String s) throws IllegalArgumentException {
-
+		
 		String[] _s = s.split(";");
 		//TODO Verify that the first item is "HELLO" ?
-
-		//TODO Verify the number of attribute ? Less than 5 errors
+		
+		//Verify the number of attribute ? Less than 5 errors
 		if(_s[0].equals("HELLO")) {
 			if(_s.length >= 5) {
 
@@ -43,12 +43,13 @@ public class HelloMessage {
 						int HelloInterval = Integer.parseInt(_s[3]);
 						if(0<=HelloInterval && HelloInterval<256) {
 							hello_interval = Integer.parseInt(_s[3]);
-							int NumPeers_temp = Integer.parseInt(_s[4]);
+							int NumPeers_temp = Integer.parseInt(_s[4].replaceAll("[^0-9]", ""));
 							if (0<=NumPeers_temp && NumPeers_temp<256) {
 								NumPeers = NumPeers_temp;
 								if (NumPeers!=0) {
 									for (int i=0; i<NumPeers; i++) {
 										peers.add(_s[5+i]);
+										
 									}
 								}
 							}else {
