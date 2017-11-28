@@ -25,7 +25,8 @@ public class HelloReceiver implements SimpleMessageHandler {
 				if (!hm.getSenderId().equals(myMuxDemux.getID())){
 					if (!PeerTable.containsPeer(hm.getSenderId())) {
 						//parsed[0] contains the IP Address of the peer that sent the HelloMessage
-						PeerTable.addPeer(hm.getSenderId(), InetAddress.getByName(parsed[0]), hm.getHelloInterval());;
+						InetAddress peerIPAddress = InetAddress.getByName(parsed[0].substring(1,parsed[0].length()));
+						PeerTable.addPeer(hm.getSenderId(), peerIPAddress , hm.getHelloInterval());;
 					}
 					if (!myMuxDemux.getPeerDatabase().containsKey(hm.getSenderId())){
 						Database peerDB = new Database(-1);
