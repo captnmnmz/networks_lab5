@@ -18,7 +18,7 @@ public class HelloReceiver implements SimpleMessageHandler {
 		while(true) {
 			try {
 				String _received = incoming.dequeue();
-				String[] parsed = _received.split(";",2);
+				String[] parsed = _received.split(";", 2);
 				String received = parsed[1];
 				HelloMessage hm = new HelloMessage(received);
 				// Not my HelloMessage
