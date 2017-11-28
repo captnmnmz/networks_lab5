@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.MissingResourceException;
 
 import materials.Database;
 import materials.PeerTable;
@@ -72,6 +74,7 @@ class FilenameQueue {
 public class GettingAllFilesFromPeer implements Runnable {
 	//TODO Define the size of the queue
 	private int PORT = 4242;
+	private static final int CHUNKED = -1;
 	private String peerID;
 	private String root = "C:/Users/jules/Google Drive/Cours Polytechnique/From the internet to the IoT/";
 	private FilenameQueue fileToDownload = new FilenameQueue(20);
@@ -84,6 +87,68 @@ public class GettingAllFilesFromPeer implements Runnable {
 		}
 	}
 
+	
+	/**
+	 * Download the document part through an already open TCP connection. Header
+	 * is supposed partially parsed, but not length specification.
+	 * 
+	 * @param answerStream
+	 *          the input stream for the current TCP connection
+	 * @param fileName
+	 *          the name of a local file where the result will be stored
+	 */
+	private static void download(BufferedReader answerStream, File file) {
+		
+		//TODO change the length of the buffer
+		int length = 1024;
+		char[] buffer = new char[length > 0 ? length : 0]; // initial allocation
+
+		// readLine returns null when the end of the input stream has been reached,
+		// this means that the server has shutdown the stream,
+		// but it is not always the case ... or not always immediately ...
+		// we should also consider the "Content-Length" information from the header
+		// and also handle the case of chunked data
+		// used when the server doesn't know the length at start, or
+		// to accomodate with smaller buffer size.
+		String line = "";
+		int count = 0;
+		// __Test__.assertFalse("chunked encoding not supported", chunked);
+		
+		try {
+			PrintWriter pw = new PrintWriter(file);
+			while (line != null) {
+				line = answerStream.readLine();
+				if (line.length() == 0)
+					line = answerStream.readLine();
+				length = Integer.parseInt(line, 16);
+				count = 0;
+				if (length == 0)
+					break;
+				
+				if (buffer.length < length)
+					buffer = new char[length]; // size extended as needed
+				while (count < length) {
+					int n = answerStream.read(buffer, count, length - count);
+					if (n < 0) { // reached EOF
+						length = count;
+						break;
+					}
+					count += n;
+					// System.out.println(n + " " + count);
+				}
+				pw.write(buffer, 0, length);
+				// uncomment the next line for exercise 3
+				if (count >= length)
+					break;
+			}
+			pw.flush();
+			pw.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.exit(-11);
+		}
+	}
+	
 	@Override
 	public void run() {
 		while(!fileToDownload.isEmpty()) {
@@ -102,23 +167,15 @@ public class GettingAllFilesFromPeer implements Runnable {
 
 				//Receive the corresponding file
 				BufferedReader br = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
-				String line;
 				File received_file = new File(root + peerID + "/" + filename );
-				FileWriter fw = new FileWriter(received_file);
-				BufferedWriter bw = new BufferedWriter(fw);
-				while(br.ready()) {
-					System.out.println("br ready");
-					if (!"".equals(line = br.readLine())){
-						System.out.println(line);
-						bw.write(line + System.getProperty( "line.separator" ));
-					}
-				}
+
+				download(br,received_file);
+
 
 				pw.close();
 				output.close();
-				
-				bw.close();
-				fw.close();
+
+
 				br.close();
 
 				clientsocket.close();
