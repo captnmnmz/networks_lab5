@@ -1,5 +1,7 @@
 package ListMessage;
 
+import java.util.Arrays;
+
 public class ListMessage {
 
 	private String senderID;
@@ -18,9 +20,9 @@ public class ListMessage {
 	 */
 
 	public ListMessage(String s) throws IllegalArgumentException {
-		String[] _s = s.split(";",7);
+		String[] _s_ = s.split(";",8);
 		//Verify that the first item is "LIST" ?
-
+		String[] _s = Arrays.copyOfRange(_s_,0,7);
 		//Verify the number of features 
 		if(_s[0].equals("LIST")) {
 			if(_s.length==7) {

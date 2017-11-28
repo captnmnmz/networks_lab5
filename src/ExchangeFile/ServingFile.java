@@ -76,7 +76,7 @@ public class ServingFile implements Runnable {
 			BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			
 			String request = br.readLine();
-			String reg_exp = "(get ([^ \\n]*)\\n)";
+			String reg_exp = "(get (.*))";
 			Pattern pattern = Pattern.compile(reg_exp);
 			Matcher matcher = pattern.matcher(request);
 
@@ -100,10 +100,11 @@ public class ServingFile implements Runnable {
 	@Override
 	public void run() {
 		try {
-			ServerSocket server = new ServerSocket(PORT,backlog);
 			while(true) {
+				ServerSocket server = new ServerSocket(PORT,backlog);
 				Socket clientsocket = server.accept();
 				handleRequest(clientsocket);
+				server.close();
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block

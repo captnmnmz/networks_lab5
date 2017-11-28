@@ -79,7 +79,6 @@ public class ListReceiver implements SimpleMessageHandler {
 										//synchronized peerrecord in peertable
 										PeerTable.sync(peer_db, senderID, lm.getSequenceNumber());
 										//cancel SYN timertask
-										System.out.println("timertask cancelled");
 										PeerTable.cancelTask(senderID);
 										//we reinitialise the totalparts counter for another LIST message
 										peer_db.setTotalparts(0);
