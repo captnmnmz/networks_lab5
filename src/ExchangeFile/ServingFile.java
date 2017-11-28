@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 
-public class ServingFile {
+public class ServingFile implements Runnable {
 	private int PORT = 4242;
 	private int backlog = 3;
 	//TODO Set queue's size
@@ -44,7 +44,7 @@ public class ServingFile {
 	public synchronized String formatMessage(String filename) throws FileNotFoundException {
 			String message="";
 			//Eventually, throws a FileNotFoundException
-			File file = new File("/Users/bastienchevallier/Documents/IoT"+filename);
+			File file = new File("/Users/bastienchevallier/Documents/IoT/"+filename);
 			if (file.isFile()) {
 				message = filename + System.getProperty( "line.separator" ) ;
 				message += Long.toString(file.length()) + System.getProperty( "line.separator" );
@@ -96,8 +96,8 @@ public class ServingFile {
 		}
 	}
 
-	public void serveFile() {
-		//Create a TCP connection listening on port 4242
+	@Override
+	public void run() {
 		try {
 			ServerSocket server = new ServerSocket(PORT,backlog);
 			while(true) {

@@ -91,6 +91,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 			//TCP Client Socket with peerAddress
 			try {
 				//TODO the socket is created each time even if it is the same peer
+				System.out.println(PeerTable.getPeer(peerID).getAddress());
 				Socket clientsocket = new Socket(PeerTable.getPeer(peerID).getAddress(),PORT);
 
 				//Send the request for the corresponding filename

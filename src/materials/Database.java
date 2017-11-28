@@ -10,7 +10,7 @@ import java.util.TimerTask;
 public class Database {
 
 	private int seqNum;
-	private int SCREENINTERVALL;
+	private int SCREENINTERVALL = 1000;
 	private int totalparts = 0;
 	private int counter = 0;
 
@@ -39,7 +39,7 @@ public class Database {
 	 * 
 	 */
 	public synchronized void screenDB() {
-		File root_folder = new File("/Users/bastienchevallier/Documents/IoT");
+		File root_folder = new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder");
 		
 		Timer TIMER = new Timer("ScreenTimer", true);
 		Database db_to_screen = this;
