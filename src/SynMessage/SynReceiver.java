@@ -50,7 +50,9 @@ public class SynReceiver implements SimpleMessageHandler {
 	public void run() {
 		while (true) {
 			try {
-				String message = incoming.dequeue();
+				String _received = incoming.dequeue();
+				String[] parsed = _received.split(";",2);
+				String message = parsed[1];
 				SynMessage sm = new SynMessage(message); // throws IllegalArgumentException
 				
 				//The message is for me and I'm not in the process of sending LIST messages to this peer

@@ -36,7 +36,9 @@ public class ListReceiver implements SimpleMessageHandler {
 	public void run() {
 		while(true) {
 			try {
-				String received = incoming.dequeue();
+				String _received = incoming.dequeue();
+				String[] parsed = _received.split(";",2);
+				String received = parsed[1];
 				ListMessage lm = new ListMessage(received);
 
 				//Is ListMessage for me ?

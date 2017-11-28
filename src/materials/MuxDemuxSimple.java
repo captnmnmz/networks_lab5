@@ -24,9 +24,6 @@ public class MuxDemuxSimple implements Runnable {
     private Database my_db=null;
     private HashMap<String,Database> peers_db;
     private String peerID;
-    
-    //Address of the peer that will be used by HelloReceiver
-    private InetAddress peerIPAddress;
     private int HelloInterval;
 	
 	public MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s, String peerID, int HelloInterval) {
@@ -44,7 +41,7 @@ public class MuxDemuxSimple implements Runnable {
 		new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder").mkdir();
 		peers_db=new HashMap<String,Database>();
 		
-		ServingFile sf = new ServingFile(4242,backlog);
+		ServingFile sf = new ServingFile(PORT,backlog);
 		new Thread(sf).start();
 
 	}
@@ -69,10 +66,10 @@ public class MuxDemuxSimple implements Runnable {
 											PORT);
 						myS.receive(dpReceived);
 						int endIndex = dpReceived.getLength();
-						InetAddress peerIPAddress = dpReceived.getAddress();
-						String message = new String(dpReceived.getData()).substring(0, endIndex);
+						String peerIPAddress = dpReceived.getAddress().toString();
+						String received = peerIPAddress + ";" + new String(dpReceived.getData());
+						String message = received.substring(0, endIndex);
 						for (int i=0; i<myMessageHandlers.length; i++){
-							setPeerIPAddress(peerIPAddress);
 							myMessageHandlers[i].handleMessage(message);
 						}
 					} catch (UnknownHostException e){
@@ -159,14 +156,6 @@ public class MuxDemuxSimple implements Runnable {
 	
 	public HashMap<String,Database> getPeerDatabase(){
 		return this.peers_db;
-	}
-	
-	public void setPeerIPAddress(InetAddress peerIPAddress) {
-		this.peerIPAddress = peerIPAddress;
-	}
-	
-	public InetAddress getPeerIPAddress() {
-		return this.peerIPAddress;
 	}
 	
 }

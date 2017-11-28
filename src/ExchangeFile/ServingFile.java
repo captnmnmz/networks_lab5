@@ -103,7 +103,6 @@ public class ServingFile implements Runnable {
 			while(true) {
 				Socket clientsocket = server.accept();
 				handleRequest(clientsocket);
-				server.close();
 			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
