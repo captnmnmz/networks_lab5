@@ -97,6 +97,7 @@ public class GettingAllFilesFromPeer implements Runnable {
 	 * @param fileName
 	 *          the name of a local file where the result will be stored
 	 */
+	
 	private static void download(BufferedReader answerStream, File file) {
 		
 		//TODO change the length of the buffer
@@ -168,10 +169,14 @@ public class GettingAllFilesFromPeer implements Runnable {
 				//Receive the corresponding file
 				BufferedReader br = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
 				File received_file = new File(root + peerID + "/" + filename );
+
 				download(br,received_file);
+
 
 				pw.close();
 				output.close();
+
+
 				br.close();
 
 				clientsocket.close();

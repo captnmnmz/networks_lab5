@@ -42,10 +42,10 @@ public class ListMessage {
 								TotalParts = Integer.parseInt(_s[4]);
 								part_num = Integer.parseInt(_s[5]);
 								if(part_num <= TotalParts) {
-									if(_s[6].length()<=255) {
-										data =_s[6];
+									if(_s[6].trim().length()<=255) {
+										data = _s[6];
 									}else {
-										throw new IllegalArgumentException("data is a text string of max 255 characters \n\r"
+										throw new IllegalArgumentException("Data is a text string of max 255 characters \n\r"
 												+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 									}
 								}else {
@@ -116,7 +116,7 @@ public class ListMessage {
 							if(data.length()<=255) {
 								this.data =data;
 							}else {
-								throw new IllegalArgumentException("data is a text string of max 255 characters \n\r"
+								throw new IllegalArgumentException("Data is a text string of max 255 characters \n\r"
 										+"The string is supposed to be formatted as : LIST;senderID;peerID;sequence#;TotalParts;part#;data;");
 							}
 						}else {

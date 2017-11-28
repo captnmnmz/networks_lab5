@@ -52,8 +52,6 @@ public class SynReceiver implements SimpleMessageHandler {
 			try {
 				String _received = incoming.dequeue();
 				String[] parsed = _received.split(";",2);
-				System.out.println(parsed[0]);
-				System.out.println(parsed[1]);
 				String message = parsed[1];
 				SynMessage sm = new SynMessage(message); // throws IllegalArgumentException
 				

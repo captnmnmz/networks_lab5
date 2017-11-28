@@ -10,7 +10,9 @@ import java.util.TimerTask;
 public class Database {
 
 	private int seqNum;
-	private int SCREENINTERVALL = 1000;
+
+	private int SCREENINTERVALL=1000;
+
 	private int totalparts = 0;
 	private int counter = 0;
 
@@ -39,8 +41,8 @@ public class Database {
 	 * 
 	 */
 	public synchronized void screenDB() {
-		File root_folder = new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder");
 		
+		File root_folder = new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder");
 		Timer TIMER = new Timer("ScreenTimer", true);
 		Database db_to_screen = this;
 		TimerTask screen = new TimerTask() {
@@ -48,7 +50,6 @@ public class Database {
 			public void run() {
 				File[] listOfFiles = root_folder.listFiles();
 				for (int i=0; i<listOfFiles.length; i++) {
-					
 					// Add the the path name to the database if a new folder or file was added
 					if(!db.contains(listOfFiles[i].getName())) {
 						db.add(listOfFiles[i].getName());

@@ -44,7 +44,8 @@ public class ServingFile implements Runnable {
 	public synchronized String formatMessage(String filename) throws FileNotFoundException {
 			String message="";
 			//Eventually, throws a FileNotFoundException
-			File file = new File("/Users/bastienchevallier/Documents/IoT/"+filename);
+
+			File file = new File("/Users/bastienchevallier/Documents/IoT/mysharefilesfolder/"+filename);
 			if (file.isFile()) {
 				message = filename + System.getProperty( "line.separator" ) ;
 				message += Long.toString(file.length()) + System.getProperty( "line.separator" );
